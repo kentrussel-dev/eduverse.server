@@ -2,6 +2,10 @@
 
 A robust ASP.NET Core backend for the EduVerse educational platform with MongoDB integration.
 
+🌐 **Frontend Repository**: [eduverse.main](https://github.com/kentrussel-dev/eduverse.main)
+
+This is the backend server component. For the React frontend application, please visit the frontend repository.
+
 ## Tech Stack
 
 - **Framework**: ASP.NET Core 9.0
