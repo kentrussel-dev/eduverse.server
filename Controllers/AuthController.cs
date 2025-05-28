@@ -39,18 +39,36 @@ namespace EduVerse.Server.Controllers
             _env = env;
             _logger = logger;
         }
-
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
             try
             {
+                if (model?.Email == null)
+                {
+                    return BadRequest(new { Message = "Email is required." });
+                }
+
+                // Check if user exists first
+                var existingUser = await _userManager.FindByEmailAsync(model.Email);
+                if (existingUser != null)
+                {
+                    if (existingUser.AccountType == AccountType.Google)
+                    {
+                        return BadRequest(new { Message = "This email is already registered with a Google account. Please sign in with Google." });
+                    }
+                    return BadRequest(new { Message = "This email is already registered. Please login or use a different email." });
+                }                // Create new user
                 var user = new ApplicationUser
                 {
                     UserName = model.Email,
                     Email = model.Email,
-                    FullName = model.FullName,
-                    IsTeacher = model.IsTeacher
+                    FullName = model.FullName ?? model.Email,
+                    Avatar = "default.png",
+                    IsTeacher = model.IsTeacher,
+                    AccountType = AccountType.Email,
+                    AuthProvider = "Email",
+                    EmailConfirmed = false // Requires confirmation
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
@@ -58,50 +76,70 @@ namespace EduVerse.Server.Controllers
                 if (!result.Succeeded)
                 {
                     _logger.LogWarning("Registration failed for {Email}: {Errors}", model.Email, string.Join(", ", result.Errors.Select(e => e.Description)));
-                    return BadRequest(result.Errors);
+                    return BadRequest(new { Message = result.Errors.First().Description });
                 }
 
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 var confirmationLink = Url.Action("ConfirmEmail", "Auth", new { userId = user.Id, token }, Request.Scheme);
 
-                await SendEmailConfirmation(user.Email, confirmationLink);
+                if (confirmationLink != null)
+                {
+                    await SendEmailConfirmation(user.Email, confirmationLink);
+                }
 
                 return Ok(new { Message = "Registration successful. Please check your email for confirmation." });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Exception during registration for {Email}", model?.Email);
-                return StatusCode(500, "An error occurred during registration. Please try again later.");
+                return StatusCode(500, new { Message = "An error occurred during registration. Please try again later." });
             }
         }
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user == null)
+            try
             {
-                return BadRequest("Invalid credentials");
-            }
+                if (string.IsNullOrEmpty(model?.Email) || string.IsNullOrEmpty(model?.Password))
+                {
+                    return BadRequest(new { Message = "Email and password are required" });
+                }
 
-            if (!await _userManager.IsEmailConfirmedAsync(user))
-            {
-                return StatusCode(401, "Please confirm your email address before logging in. Check your inbox for the confirmation link.");
-            }
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    return BadRequest(new { Message = "Invalid email or password" });
+                }
 
-            var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
-            if (!result.Succeeded)
-            {
-                return BadRequest("Invalid credentials");
-            }
+                // Check authentication method
+                if (user.AuthProvider == "Google")
+                {
+                    return BadRequest(new { Message = "This account uses Google Sign-In. Please click the 'Sign in with Google' button." });
+                }
 
-            // Return simple user data without cookies
-            return Ok(new
+                if (!await _userManager.IsEmailConfirmedAsync(user))
+                {
+                    return StatusCode(401, new { Message = "Please confirm your email address before logging in. Check your inbox for the confirmation link." });
+                }
+                var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
+                if (!result.Succeeded)
+                {
+                    return BadRequest(new { Message = "Invalid email or password" });
+                }                // Return simple user data without cookies
+                return Ok(new
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    FullName = user.FullName,
+                    IsTeacher = user.IsTeacher,
+                    Message = "Login successful"
+                });
+            }
+            catch (Exception ex)
             {
-                Id = user.Id,
-                Email = user.Email,
-                FullName = user.FullName,
-                IsTeacher = user.IsTeacher
-            });
+                _logger.LogError(ex, "Exception during login for {Email}", model?.Email);
+                return StatusCode(500, new { Message = "An error occurred during login. Please try again later." });
+            }
         }
 
         [HttpPost("logout")]
@@ -388,13 +426,14 @@ namespace EduVerse.Server.Controllers
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.FullName),
-                new Claim("avatar", user.Avatar),
+                new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
+                new Claim(ClaimTypes.Name, user.FullName ?? string.Empty),
+                new Claim("avatar", user.Avatar ?? "default.png"),
                 new Claim("isTeacher", user.IsTeacher.ToString())
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var jwtKey = _configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not configured");
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expiry = DateTime.Now.AddMinutes(Convert.ToInt32(_configuration["Jwt:ExpiryInMinutes"]));
 
@@ -408,32 +447,67 @@ namespace EduVerse.Server.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
         private async Task SendEmailConfirmation(string email, string confirmationLink)
         {
-            var message = new MimeMessage();
-            message.From.Add(new MailboxAddress(_configuration["MailSettings:DisplayName"], _configuration["MailSettings:Mail"]));
-            message.To.Add(new MailboxAddress("", email));
-            message.Subject = "Confirm your EduVerse account";
-
-            var bodyBuilder = new BodyBuilder
+            try
             {
-                HtmlBody = $@"
-                    <h1>Welcome to EduVerse!</h1>
-                    <p>Please confirm your email by clicking the link below:</p>
-                    <a href='{confirmationLink}'>Confirm Email</a>
-                    <p>If you didn't request this, please ignore this email.</p>
-                "
-            };
+                var fromEmail = _configuration["MailSettings:Mail"];
+                var displayName = _configuration["MailSettings:DisplayName"] ?? "EduVerse";
+                var host = _configuration["MailSettings:Host"];
+                var portStr = _configuration["MailSettings:Port"];
+                var username = _configuration["MailSettings:Username"];
+                var password = _configuration["MailSettings:Password"];
 
-            message.Body = bodyBuilder.ToMessageBody();
+                if (string.IsNullOrEmpty(fromEmail))
+                {
+                    _logger.LogError("Email configuration missing: MailSettings:Mail not found");
+                    throw new InvalidOperationException("Email sender address not configured");
+                }
 
-            using var client = new SmtpClient();
-            await client.ConnectAsync(_configuration["MailSettings:Host"], Convert.ToInt32(_configuration["MailSettings:Port"]), false);
-            // Use Username and Password for Mailtrap
-            await client.AuthenticateAsync(_configuration["MailSettings:Username"], _configuration["MailSettings:Password"]);
-            await client.SendAsync(message);
-            await client.DisconnectAsync(true);
+                if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(portStr) ||
+                    string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+                {
+                    _logger.LogError("SMTP configuration missing. Check MailSettings in user secrets");
+                    throw new InvalidOperationException("SMTP configuration incomplete");
+                }
+
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress(displayName, fromEmail));
+                message.To.Add(new MailboxAddress("", email));
+                message.Subject = "Confirm your EduVerse account";
+
+                var bodyBuilder = new BodyBuilder
+                {
+                    HtmlBody = $@"
+                        <h1>Welcome to EduVerse!</h1>
+                        <p>Please confirm your email by clicking the link below:</p>
+                        <a href='{confirmationLink}'>Confirm Email</a>
+                        <p>If you didn't request this, please ignore this email.</p>
+                    "
+                };
+
+                message.Body = bodyBuilder.ToMessageBody();
+
+                using var client = new SmtpClient();
+                try
+                {
+                    await client.ConnectAsync(host, Convert.ToInt32(portStr), false);
+                    await client.AuthenticateAsync(username, password);
+                    await client.SendAsync(message);
+                    await client.DisconnectAsync(true);
+                    _logger.LogInformation("Confirmation email sent successfully to {Email}", email);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to send confirmation email to {Email}", email);
+                    throw new InvalidOperationException("Failed to send confirmation email", ex);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in SendEmailConfirmation for {Email}", email);
+                throw;
+            }
         }
         [Authorize]
         [HttpPost("update-profile")]
@@ -463,11 +537,10 @@ namespace EduVerse.Server.Controllers
                 user.IsTeacher
             });
         }
-
         public class UpdateProfileModel
         {
-            public string FullName { get; set; }
-            public string Avatar { get; set; }
+            public string FullName { get; set; } = string.Empty;
+            public string Avatar { get; set; } = "default.png";
         }
 
         [HttpGet("auth-mode")]

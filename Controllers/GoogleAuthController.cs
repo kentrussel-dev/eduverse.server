@@ -37,7 +37,6 @@ namespace EduVerse.Server.Controllers
             _logger.LogInformation("Starting Google authentication with redirect URL: {RedirectUrl}", redirectUrl);
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
-
         [HttpGet("callback")]
         public async Task<IActionResult> Callback(string? returnUrl)
         {
@@ -54,6 +53,18 @@ namespace EduVerse.Server.Controllers
 
                 var email = info.Principal.FindFirstValue(ClaimTypes.Email);
                 var name = info.Principal.FindFirstValue(ClaimTypes.Name);
+
+                // Check if email exists but with password authentication
+                var existingUser = await _userManager.FindByEmailAsync(email);
+                if (existingUser != null)
+                {
+                    var logins = await _userManager.GetLoginsAsync(existingUser);
+                    if (!logins.Any())
+                    {
+                        // User exists but with password authentication
+                        return Redirect($"http://localhost:3000/login?error={HttpUtility.UrlEncode("This email is already registered with a password. Please login with email and password instead.")}");
+                    }
+                }
 
                 if (string.IsNullOrEmpty(email))
                 {
@@ -75,14 +86,8 @@ namespace EduVerse.Server.Controllers
                 var user = await _userManager.FindByEmailAsync(email);
                 if (user == null)
                 {
-                    // Create new user
-                    user = new ApplicationUser
-                    {
-                        UserName = email,
-                        Email = email,
-                        FullName = name ?? email.Split('@')[0],
-                        EmailConfirmed = true // Email is verified by Google
-                    };
+                    // Create new user using factory method
+                    user = ApplicationUser.CreateGoogleUser(email, name);
 
                     var createResult = await _userManager.CreateAsync(user);
                     if (!createResult.Succeeded)
