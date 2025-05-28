@@ -1,0 +1,6 @@
+@EduVerse.Server_HostAddress = http://localhost:5000
+
+GET {{EduVerse.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
