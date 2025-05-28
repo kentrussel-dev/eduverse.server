@@ -113,13 +113,29 @@ The project uses ASP.NET Core User Secrets for local development and environment
 1. **Local Development**:
    - Right-click the project in Visual Studio and select "Manage User Secrets"
    - Or use the command line: `dotnet user-secrets init`
-   - Set your secrets:
+   - Required secrets to set up:
+
    ```bash
-   dotnet user-secrets set "MongoDB:ConnectionString" "your-connection-string"
-   dotnet user-secrets set "Jwt:Secret" "your-jwt-secret"
-   dotnet user-secrets set "Authentication:Google:ClientId" "your-client-id"
-   dotnet user-secrets set "Authentication:Google:ClientSecret" "your-client-secret"
+   # MongoDB Connection
+   dotnet user-secrets set "ConnectionStrings:MongoDB" "mongodb://localhost:27017"
+
+   # JWT Authentication
+   dotnet user-secrets set "Jwt:Key" "your-256-bit-secret-key"
+
+   # Google OAuth
+   dotnet user-secrets set "Authentication:Google:ClientId" "your-google-client-id"
+   dotnet user-secrets set "Authentication:Google:ClientSecret" "your-google-client-secret"
+
+   # SMTP Settings (Example using Mailtrap)
+   dotnet user-secrets set "MailSettings:Host" "sandbox.smtp.mailtrap.io"
+   dotnet user-secrets set "MailSettings:Port" "2525"
+   dotnet user-secrets set "MailSettings:Username" "your-smtp-username"
    dotnet user-secrets set "MailSettings:Password" "your-smtp-password"
+   ```
+
+   You can verify your secrets are set correctly with:
+   ```bash
+   dotnet user-secrets list
    ```
 
 2. **Production**:
