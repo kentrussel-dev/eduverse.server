@@ -130,6 +130,15 @@ builder.Services.AddAuthentication(options =>
             var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
             logger.LogWarning("Rejected sign-in token for {Path}: {Reason}", context.Request.Path, context.Exception.Message);
             return Task.CompletedTask;
+        },
+        OnChallenge = context =>
+        {
+            if (context.AuthenticateFailure == null && context.Request.Path.StartsWithSegments("/hubs"))
+            {
+                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                logger.LogWarning("No sign-in token was sent to {Path}. Log in again on the website.", context.Request.Path);
+            }
+            return Task.CompletedTask;
         }
     };
 })
