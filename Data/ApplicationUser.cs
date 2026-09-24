@@ -35,6 +35,9 @@ namespace EduVerse.Server.Data
 
         public DateTime CreatedAt => createdAt;
 
+        /// <summary>"boy" or "girl" (chosen at sign-up; empty for older accounts).</summary>
+        public string? Gender { get; set; }
+
         /// <summary>The user's avatar, coins and inventory in the virtual world.</summary>
         public Realtime.WorldProfile? WorldProfile { get; set; }
 

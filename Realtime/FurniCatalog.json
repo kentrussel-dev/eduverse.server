@@ -1,0 +1,1451 @@
+[
+{
+"id": "k_bathroomCabinet",
+"name": "Bathroom Cabinet",
+"category": "Bathroom",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_bathroomCabinetDrawer",
+"name": "Bathroom Cabinet Drawer",
+"category": "Bathroom",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_bathroomSink",
+"name": "Bathroom Sink",
+"category": "Bathroom",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_bathroomSinkSquare",
+"name": "Bathroom Sink Square",
+"category": "Bathroom",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_bathtub",
+"name": "Bathtub",
+"category": "Bathroom",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_bear",
+"name": "Bear",
+"category": "Decor",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_bedBunk",
+"name": "Bed Bunk",
+"category": "Bedroom",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_bedDouble",
+"name": "Bed Double",
+"category": "Bedroom",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_bedSingle",
+"name": "Bed Single",
+"category": "Bedroom",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_bench",
+"name": "Bench",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_benchCushion",
+"name": "Bench Cushion",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_benchCushionLow",
+"name": "Bench Cushion Low",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_bookcaseClosed",
+"name": "Bookcase Closed",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_bookcaseClosedDoors",
+"name": "Bookcase Closed Doors",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_bookcaseClosedWide",
+"name": "Bookcase Closed Wide",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_bookcaseOpen",
+"name": "Bookcase Open",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_bookcaseOpenLow",
+"name": "Bookcase Open Low",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_books",
+"name": "Books",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_cabinetBed",
+"name": "Cabinet Bed",
+"category": "Bedroom",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_cabinetBedDrawer",
+"name": "Cabinet Bed Drawer",
+"category": "Bedroom",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_cabinetBedDrawerTable",
+"name": "Cabinet Bed Drawer Table",
+"category": "Bedroom",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_cabinetTelevision",
+"name": "Cabinet Television",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_cabinetTelevisionDoors",
+"name": "Cabinet Television Doors",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_cardboardBoxClosed",
+"name": "Cardboard Box Closed",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_cardboardBoxOpen",
+"name": "Cardboard Box Open",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_chair",
+"name": "Chair",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_chairCushion",
+"name": "Chair Cushion",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_chairDesk",
+"name": "Chair Desk",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_chairModernCushion",
+"name": "Chair Modern Cushion",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_chairModernFrameCushion",
+"name": "Chair Modern Frame Cushion",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_chairRounded",
+"name": "Chair Rounded",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_coatRackStanding",
+"name": "Coat Rack Standing",
+"category": "Decor",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_computerScreen",
+"name": "Computer Screen",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_desk",
+"name": "Desk",
+"category": "Tables",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_deskCorner",
+"name": "Desk Corner",
+"category": "Tables",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_dryer",
+"name": "Dryer",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_kitchenBar",
+"name": "Kitchen Bar",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_kitchenBarEnd",
+"name": "Kitchen Bar End",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_kitchenBlender",
+"name": "Kitchen Blender",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_kitchenCabinet",
+"name": "Kitchen Cabinet",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_kitchenCabinetDrawer",
+"name": "Kitchen Cabinet Drawer",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_kitchenCoffeeMachine",
+"name": "Kitchen Coffee Machine",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_kitchenFridge",
+"name": "Kitchen Fridge",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_kitchenFridgeBuiltIn",
+"name": "Kitchen Fridge Built In",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_kitchenFridgeLarge",
+"name": "Kitchen Fridge Large",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_kitchenFridgeSmall",
+"name": "Kitchen Fridge Small",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_kitchenMicrowave",
+"name": "Kitchen Microwave",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_kitchenSink",
+"name": "Kitchen Sink",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_kitchenStove",
+"name": "Kitchen Stove",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_kitchenStoveElectric",
+"name": "Kitchen Stove Electric",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_lampRoundFloor",
+"name": "Lamp Round Floor",
+"category": "Lights",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_lampRoundTable",
+"name": "Lamp Round Table",
+"category": "Lights",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_lampSquareFloor",
+"name": "Lamp Square Floor",
+"category": "Lights",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_lampSquareTable",
+"name": "Lamp Square Table",
+"category": "Lights",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_laptop",
+"name": "Laptop",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_loungeChair",
+"name": "Lounge Chair",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_loungeChairRelax",
+"name": "Lounge Chair Relax",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_loungeDesignChair",
+"name": "Lounge Design Chair",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_loungeDesignSofa",
+"name": "Lounge Design Sofa",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_loungeDesignSofaCorner",
+"name": "Lounge Design Sofa Corner",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_loungeSofa",
+"name": "Lounge Sofa",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_loungeSofaCorner",
+"name": "Lounge Sofa Corner",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_loungeSofaLong",
+"name": "Lounge Sofa Long",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_loungeSofaOttoman",
+"name": "Lounge Sofa Ottoman",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_pillow",
+"name": "Pillow",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_pillowBlue",
+"name": "Pillow Blue",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_pillowBlueLong",
+"name": "Pillow Blue Long",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_pillowLong",
+"name": "Pillow Long",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_plantSmall1",
+"name": "Plant Small 1",
+"category": "Plants",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_plantSmall2",
+"name": "Plant Small 2",
+"category": "Plants",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_plantSmall3",
+"name": "Plant Small 3",
+"category": "Plants",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_pottedPlant",
+"name": "Potted Plant",
+"category": "Plants",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_radio",
+"name": "Radio",
+"category": "Fun",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_rugDoormat",
+"name": "Rug Doormat",
+"category": "Rugs",
+"seat": false,
+"walk": true
+},
+{
+"id": "k_rugRectangle",
+"name": "Rug Rectangle",
+"category": "Rugs",
+"seat": false,
+"walk": true
+},
+{
+"id": "k_rugRound",
+"name": "Rug Round",
+"category": "Rugs",
+"seat": false,
+"walk": true
+},
+{
+"id": "k_rugRounded",
+"name": "Rug Rounded",
+"category": "Rugs",
+"seat": false,
+"walk": true
+},
+{
+"id": "k_rugSquare",
+"name": "Rug Square",
+"category": "Rugs",
+"seat": false,
+"walk": true
+},
+{
+"id": "k_shower",
+"name": "Shower",
+"category": "Bathroom",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_showerRound",
+"name": "Shower Round",
+"category": "Bathroom",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_sideTable",
+"name": "Side Table",
+"category": "Tables",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_sideTableDrawers",
+"name": "Side Table Drawers",
+"category": "Tables",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_speaker",
+"name": "Speaker",
+"category": "Fun",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_speakerSmall",
+"name": "Speaker Small",
+"category": "Fun",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_stoolBar",
+"name": "Stool Bar",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_stoolBarSquare",
+"name": "Stool Bar Square",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "k_table",
+"name": "Table",
+"category": "Tables",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_tableCloth",
+"name": "Table Cloth",
+"category": "Tables",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_tableCoffee",
+"name": "Table Coffee",
+"category": "Tables",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_tableCoffeeGlass",
+"name": "Table Coffee Glass",
+"category": "Tables",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_tableCoffeeGlassSquare",
+"name": "Table Coffee Glass Square",
+"category": "Tables",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_tableCoffeeSquare",
+"name": "Table Coffee Square",
+"category": "Tables",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_tableCross",
+"name": "Table Cross",
+"category": "Tables",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_tableCrossCloth",
+"name": "Table Cross Cloth",
+"category": "Tables",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_tableGlass",
+"name": "Table Glass",
+"category": "Tables",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_tableRound",
+"name": "Table Round",
+"category": "Tables",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_televisionAntenna",
+"name": "Television Antenna",
+"category": "Fun",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_televisionModern",
+"name": "Television Modern",
+"category": "Fun",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_televisionVintage",
+"name": "Television Vintage",
+"category": "Fun",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_toaster",
+"name": "Toaster",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_toilet",
+"name": "Toilet",
+"category": "Bathroom",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_toiletSquare",
+"name": "Toilet Square",
+"category": "Bathroom",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_trashcan",
+"name": "Trashcan",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_washer",
+"name": "Washer",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "k_washerDryerStacked",
+"name": "Washer Dryer Stacked",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kf_armchair_pillows",
+"name": "Armchair Pillows",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "kf_armchair",
+"name": "Armchair",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "kf_bed_double_a",
+"name": "Bed Double (A)",
+"category": "Bedroom",
+"seat": true,
+"walk": false
+},
+{
+"id": "kf_bed_double_b",
+"name": "Bed Double (B)",
+"category": "Bedroom",
+"seat": true,
+"walk": false
+},
+{
+"id": "kf_bed_single_a",
+"name": "Bed Single (A)",
+"category": "Bedroom",
+"seat": true,
+"walk": false
+},
+{
+"id": "kf_bed_single_b",
+"name": "Bed Single (B)",
+"category": "Bedroom",
+"seat": true,
+"walk": false
+},
+{
+"id": "kf_book_set",
+"name": "Book Set",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "kf_cabinet_medium_decorated",
+"name": "Cabinet Medium Decorated",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "kf_cabinet_medium",
+"name": "Cabinet Medium",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "kf_cabinet_small_decorated",
+"name": "Cabinet Small Decorated",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "kf_cabinet_small",
+"name": "Cabinet Small",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "kf_cactus_medium_a",
+"name": "Cactus Medium (A)",
+"category": "Plants",
+"seat": false,
+"walk": false
+},
+{
+"id": "kf_cactus_medium_b",
+"name": "Cactus Medium (B)",
+"category": "Plants",
+"seat": false,
+"walk": false
+},
+{
+"id": "kf_cactus_small_a",
+"name": "Cactus Small (A)",
+"category": "Plants",
+"seat": false,
+"walk": false
+},
+{
+"id": "kf_cactus_small_b",
+"name": "Cactus Small (B)",
+"category": "Plants",
+"seat": false,
+"walk": false
+},
+{
+"id": "kf_chair_a_wood",
+"name": "Chair (A) Wood",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "kf_chair_a",
+"name": "Chair (A)",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "kf_chair_b_wood",
+"name": "Chair (B) Wood",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "kf_chair_b",
+"name": "Chair (B)",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "kf_chair_c",
+"name": "Chair (C)",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "kf_chair_stool_wood",
+"name": "Chair Stool Wood",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "kf_chair_stool",
+"name": "Chair Stool",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "kf_couch_pillows",
+"name": "Couch Pillows",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "kf_couch",
+"name": "Couch",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "kf_lamp_standing",
+"name": "Lamp Standing",
+"category": "Lights",
+"seat": false,
+"walk": false
+},
+{
+"id": "kf_lamp_table",
+"name": "Lamp Table",
+"category": "Lights",
+"seat": false,
+"walk": false
+},
+{
+"id": "kf_pictureframe_standing_a",
+"name": "Pictureframe Standing (A)",
+"category": "Decor",
+"seat": false,
+"walk": false
+},
+{
+"id": "kf_pictureframe_standing_b",
+"name": "Pictureframe Standing (B)",
+"category": "Decor",
+"seat": false,
+"walk": false
+},
+{
+"id": "kf_pillow_a",
+"name": "Pillow (A)",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "kf_pillow_b",
+"name": "Pillow (B)",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "kf_rug_oval_a",
+"name": "Rug Oval (A)",
+"category": "Rugs",
+"seat": false,
+"walk": true
+},
+{
+"id": "kf_rug_oval_b",
+"name": "Rug Oval (B)",
+"category": "Rugs",
+"seat": false,
+"walk": true
+},
+{
+"id": "kf_rug_rectangle_a",
+"name": "Rug Rectangle (A)",
+"category": "Rugs",
+"seat": false,
+"walk": true
+},
+{
+"id": "kf_rug_rectangle_b",
+"name": "Rug Rectangle (B)",
+"category": "Rugs",
+"seat": false,
+"walk": true
+},
+{
+"id": "kf_rug_rectangle_stripes_a",
+"name": "Rug Rectangle Stripes (A)",
+"category": "Rugs",
+"seat": false,
+"walk": true
+},
+{
+"id": "kf_rug_rectangle_stripes_b",
+"name": "Rug Rectangle Stripes (B)",
+"category": "Rugs",
+"seat": false,
+"walk": true
+},
+{
+"id": "kf_shelf_a_big",
+"name": "Shelf (A) Big",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "kf_shelf_a_small",
+"name": "Shelf (A) Small",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "kf_shelf_b_large_decorated",
+"name": "Shelf (B) Large Decorated",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "kf_shelf_b_large",
+"name": "Shelf (B) Large",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "kf_shelf_b_small_decorated",
+"name": "Shelf (B) Small Decorated",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "kf_shelf_b_small",
+"name": "Shelf (B) Small",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "kf_table_low",
+"name": "Table Low",
+"category": "Tables",
+"seat": false,
+"walk": false
+},
+{
+"id": "kf_table_medium_long",
+"name": "Table Medium Long",
+"category": "Tables",
+"seat": false,
+"walk": false
+},
+{
+"id": "kf_table_medium",
+"name": "Table Medium",
+"category": "Tables",
+"seat": false,
+"walk": false
+},
+{
+"id": "kf_table_small",
+"name": "Table Small",
+"category": "Tables",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_chair_a",
+"name": "Chair (A)",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "kr_chair_b",
+"name": "Chair (B)",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "kr_chair_stool",
+"name": "Chair Stool",
+"category": "Seating",
+"seat": true,
+"walk": false
+},
+{
+"id": "kr_crate_buns",
+"name": "Crate Buns",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_crate_carrots",
+"name": "Crate Carrots",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_crate_cheese",
+"name": "Crate Cheese",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_crate_ham",
+"name": "Crate Ham",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_crate_lettuce",
+"name": "Crate Lettuce",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_crate_lid",
+"name": "Crate Lid",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_crate_onions",
+"name": "Crate Onions",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_crate_potatoes",
+"name": "Crate Potatoes",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_crate_steak",
+"name": "Crate Steak",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_crate_tomatoes",
+"name": "Crate Tomatoes",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_crate",
+"name": "Crate",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_dishrack_plates",
+"name": "Dishrack Plates",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_dishrack",
+"name": "Dishrack",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_fridge_a_decorated",
+"name": "Fridge (A) Decorated",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_fridge_a",
+"name": "Fridge (A)",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_fridge_b",
+"name": "Fridge (B)",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_jar_a_large",
+"name": "Jar (A) Large",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_jar_b_large",
+"name": "Jar (B) Large",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_jar_c_large",
+"name": "Jar (C) Large",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_jar_d_large",
+"name": "Jar D Large",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_kitchencabinet_half",
+"name": "Kitchencabinet Half",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_kitchencabinet",
+"name": "Kitchencabinet",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_kitchencounter_sink_backsplash",
+"name": "Kitchencounter Sink Backsplash",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_kitchencounter_sink",
+"name": "Kitchencounter Sink",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_kitchencounter_straight_a_backsplash",
+"name": "Kitchencounter Straight (A) Backsplash",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_kitchencounter_straight_a_decorated",
+"name": "Kitchencounter Straight (A) Decorated",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_kitchencounter_straight_a",
+"name": "Kitchencounter Straight (A)",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_kitchencounter_straight_b_backsplash",
+"name": "Kitchencounter Straight (B) Backsplash",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_kitchencounter_straight_b",
+"name": "Kitchencounter Straight (B)",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_kitchencounter_straight_decorated",
+"name": "Kitchencounter Straight Decorated",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_kitchentable_a_large_decorated",
+"name": "Kitchentable (A) Large Decorated",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_kitchentable_a_large",
+"name": "Kitchentable (A) Large",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_kitchentable_a",
+"name": "Kitchentable (A)",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_kitchentable_b_large",
+"name": "Kitchentable (B) Large",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_kitchentable_b",
+"name": "Kitchentable (B)",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_kitchentable_sink_large_decorated",
+"name": "Kitchentable Sink Large Decorated",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_kitchentable_sink_large",
+"name": "Kitchentable Sink Large",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_kitchentable_sink",
+"name": "Kitchentable Sink",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_oven",
+"name": "Oven",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_pillar_a",
+"name": "Pillar (A)",
+"category": "Decor",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_pillar_b",
+"name": "Pillar (B)",
+"category": "Decor",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_shelf_papertowel_decorated",
+"name": "Shelf Papertowel Decorated",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_shelf_papertowel",
+"name": "Shelf Papertowel",
+"category": "Storage & Study",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_stove_multi_countertop",
+"name": "Stove Multi Countertop",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_stove_multi_decorated",
+"name": "Stove Multi Decorated",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_stove_multi",
+"name": "Stove Multi",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_stove_single_countertop",
+"name": "Stove Single Countertop",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_stove_single",
+"name": "Stove Single",
+"category": "Kitchen",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_table_round_a_decorated",
+"name": "Table Round (A) Decorated",
+"category": "Tables",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_table_round_a_small_decorated",
+"name": "Table Round (A) Small Decorated",
+"category": "Tables",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_table_round_a_small",
+"name": "Table Round (A) Small",
+"category": "Tables",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_table_round_a",
+"name": "Table Round (A)",
+"category": "Tables",
+"seat": false,
+"walk": false
+},
+{
+"id": "kr_table_round_b",
+"name": "Table Round (B)",
+"category": "Tables",
+"seat": false,
+"walk": false
+}
+]
