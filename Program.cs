@@ -175,14 +175,15 @@ builder.Services.AddSignalR();
 if (string.Equals(builder.Configuration["Realtime:Store"], "InMemory", StringComparison.OrdinalIgnoreCase))
 {
     builder.Services.AddSingleton<IRoomStore, InMemoryRoomStore>();
-    builder.Services.AddSingleton<IUserProfiles, InMemoryUserProfiles>();
+    builder.Services.AddSingleton<IProfileStore, InMemoryProfileStore>();
 }
 else
 {
     builder.Services.AddSingleton<IRoomStore, MongoRoomStore>();
-    builder.Services.AddSingleton<IUserProfiles, IdentityUserProfiles>();
+    builder.Services.AddSingleton<IProfileStore, IdentityProfileStore>();
 }
 builder.Services.AddSingleton<WorldState>();
+builder.Services.AddSingleton<ProfileService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -6,11 +6,13 @@ namespace EduVerse.Server.Realtime
         // Furni that avatars cannot walk through.
         private static readonly HashSet<string> Blocking = new()
         {
-            "desk", "teacher_desk", "table", "bookshelf", "plant", "computer", "locker"
+            "desk", "teacher_desk", "table", "bookshelf", "plant", "computer", "locker",
+            "lamp", "teddy", "aquarium", "tv", "arcade", "trophy",
+            "block_red", "block_blue", "block_yellow", "block_green"
         };
 
         // Furni that avatars sit on when they stop on it.
-        private static readonly HashSet<string> Seats = new() { "chair", "sofa", "stool" };
+        private static readonly HashSet<string> Seats = new() { "chair", "sofa", "stool", "beanbag" };
 
         public static readonly IReadOnlyList<string> Names = new[] { "classroom", "study_hall", "lounge", "empty" };
 

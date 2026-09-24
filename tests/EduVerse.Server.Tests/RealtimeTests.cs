@@ -182,7 +182,7 @@ namespace EduVerse.Server.Tests
             var room = await world.CreateRoomAsync(Teacher, new CreateRoomRequest("Math 5 - Rizal", "Fractions", RoomKind.Classroom, "classroom"));
             Assert.Equal(6, room.Id.Length);
             Assert.DoesNotContain(world.ListRooms(Student.UserId), r => r.Id == room.Id);
-            Assert.Contains(world.ListRooms(Teacher.UserId), r => r.Id == room.Id);
+            Assert.Contains(world.ListRooms(Teacher.UserId, "mine"), r => r.Id == room.Id);
 
             var (snapshot, _, _) = world.Join("student", Student, room.Id.ToLowerInvariant());
             Assert.False(snapshot.YouAreHost);

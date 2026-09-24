@@ -14,6 +14,7 @@ namespace EduVerse.Server.Realtime
     /// <summary>A piece of furniture placed on a room tile.</summary>
     public class FurniItem
     {
+        public string Id { get; set; } = string.Empty;
         public string Type { get; set; } = string.Empty;
         public int X { get; set; }
         public int Y { get; set; }
@@ -41,7 +42,14 @@ namespace EduVerse.Server.Realtime
         public List<FurniItem> Furni { get; set; } = new();
         public int MaxUsers { get; set; } = 30;
         public bool BuiltIn { get; set; }
+        public List<RoomBan> Bans { get; set; } = new();
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    }
+
+    public class RoomBan
+    {
+        public Guid UserId { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 
     public class ChatReport
@@ -60,9 +68,22 @@ namespace EduVerse.Server.Realtime
 
     // ---- DTOs sent to clients ----
 
-    public record AvatarLook(string Skin, string Hair, string Shirt, string Pants)
+    /// <summary>How an avatar looks. Styles are checked against <see cref="Catalog"/>.</summary>
+    [BsonIgnoreExtraElements]
+    public class AvatarLook
     {
-        public static readonly AvatarLook Default = new("#f1c27d", "#4a3021", "#3f7fd9", "#2d3a4a");
+        public string Skin { get; set; } = "#f1c27d";
+        public string Hair { get; set; } = "#4a3021";
+        public string HairStyle { get; set; } = "short";
+        public string Top { get; set; } = "tshirt";
+        public string Shirt { get; set; } = "#3f7fd9";
+        public string Bottom { get; set; } = "pants";
+        public string Pants { get; set; } = "#2d3a4a";
+        public string Shoes { get; set; } = "#333333";
+        public string Hat { get; set; } = "none";
+        public string HatColor { get; set; } = "#e63946";
+
+        public static AvatarLook Default => new();
     }
 
     public record OccupantDto(
@@ -75,9 +96,12 @@ namespace EduVerse.Server.Realtime
         int X,
         int Y,
         bool Muted,
-        bool HandRaised);
+        bool HandRaised,
+        int Dance,
+        bool SittingOnFloor);
 
-    public record ChatMessageDto(string FromId, string Name, string Text, DateTime SentAt, bool System = false);
+    /// <summary>A chat line. WhisperTo is set for whispers, which only the two people and room hosts see.</summary>
+    public record ChatMessageDto(string FromId, string Name, string Text, DateTime SentAt, bool System = false, string? WhisperTo = null);
 
     public record RoomSummaryDto(
         string Id,
@@ -86,7 +110,8 @@ namespace EduVerse.Server.Realtime
         RoomKind Kind,
         string OwnerName,
         int UserCount,
-        int MaxUsers);
+        int MaxUsers,
+        bool IsYours);
 
     public record RoomSnapshotDto(
         string Id,
@@ -103,7 +128,14 @@ namespace EduVerse.Server.Realtime
         string Whiteboard,
         bool QuietMode,
         string YouId,
-        bool YouAreHost);
+        bool YouAreHost,
+        bool YouAreOwner,
+        int MaxUsers,
+        List<RoomBan> Bans);
 
     public record CreateRoomRequest(string Name, string Description, RoomKind Kind, string Template);
+
+    public record RoomSettingsRequest(string Name, string Description, RoomKind Kind, int MaxUsers);
+
+    public record RoomInfoDto(string Id, string Name, string Description, RoomKind Kind, int MaxUsers, List<RoomBan> Bans);
 }

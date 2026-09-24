@@ -35,8 +35,8 @@ namespace EduVerse.Server.Data
 
         public DateTime CreatedAt => createdAt;
 
-        /// <summary>Colors of the user's avatar in the virtual world.</summary>
-        public Realtime.AvatarLook? Look { get; set; }
+        /// <summary>The user's avatar, coins and inventory in the virtual world.</summary>
+        public Realtime.WorldProfile? WorldProfile { get; set; }
 
         public AccountType AccountType
         {
