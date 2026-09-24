@@ -35,6 +35,22 @@ namespace EduVerse.Server.Realtime
             return steps <= 0 ? (X, Y) : Path[Math.Min(steps, Path.Count) - 1];
         }
 
+        /// <summary>When the avatar finishes stepping onto the tile returned by <see cref="PositionAt"/> (now if standing still).</summary>
+        public DateTime CurrentStepEndsAt(DateTime now)
+        {
+            if (Path.Count == 0)
+            {
+                return now;
+            }
+            var steps = (int)Math.Ceiling((now - PathStartedAt).TotalSeconds / StepSeconds);
+            if (steps > Path.Count)
+            {
+                return now;
+            }
+            var endsAt = PathStartedAt.AddSeconds(Math.Max(0, steps) * StepSeconds);
+            return endsAt > now ? endsAt : now;
+        }
+
         /// <summary>Tiles still to walk after the one returned by <see cref="PositionAt"/>, so people who arrive later see the walk finish.</summary>
         public List<(int X, int Y)> RemainingPath(DateTime now)
         {
@@ -510,10 +526,13 @@ namespace EduVerse.Server.Realtime
                 {
                     return null;
                 }
+                // Finish the step in progress first: the new walk starts when that tile is reached.
+                // Starting it now would skip part of a step on every click, so spam-clicking made you faster.
+                var startAt = occupant.CurrentStepEndsAt(now);
                 occupant.X = start.X;
                 occupant.Y = start.Y;
                 occupant.Path = path;
-                occupant.PathStartedAt = now;
+                occupant.PathStartedAt = startAt;
                 occupant.SittingOnFloor = false;
                 occupant.Dance = 0;
 
