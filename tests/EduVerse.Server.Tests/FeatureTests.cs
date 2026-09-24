@@ -217,6 +217,28 @@ namespace EduVerse.Server.Tests
         }
 
         [Fact]
+        public async Task SpamClickingDoesNotWalkFaster()
+        {
+            var (world, _, _) = await WorldWithRoom();
+            var start = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            var now = start;
+            world.Clock = () => now;
+            var room = world.RoomOf("guest")!;
+            var occupant = room.Occupants["guest"];
+
+            // Walk from the door (0,7) toward (7,7), clicking the same target every 0.1 s for 2 s.
+            for (var i = 0; i <= 20; i++)
+            {
+                now = start.AddSeconds(i * 0.1);
+                world.Move("guest", 7, 7);
+            }
+            now = start.AddSeconds(2);
+            var (x, _) = occupant.PositionAt(now);
+            // One tile per 0.45 s: at most ceil(2 / 0.45) = 5 tiles in 2 seconds.
+            Assert.InRange(x, 4, 5);
+        }
+
+        [Fact]
         public async Task EmotesAreLimitedToTheEmojiList()
         {
             var (world, _, _) = await WorldWithRoom();
