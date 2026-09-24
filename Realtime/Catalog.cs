@@ -43,15 +43,15 @@ namespace EduVerse.Server.Realtime
             new("block_green", "Green Block", CatalogKind.Furni, 5, "Blocks"),
 
             // Clothing
-            new("top_hoodie", "Hoodie", CatalogKind.Clothing, 40, "Tops", "top", "hoodie"),
-            new("top_dress", "Dress", CatalogKind.Clothing, 40, "Tops", "top", "dress"),
-            new("top_jersey", "Sports Jersey", CatalogKind.Clothing, 60, "Tops", "top", "jersey"),
+            new("top_hoodie", "Cardigan", CatalogKind.Clothing, 40, "Tops", "top", "hoodie"),
+            new("top_dress", "Dress (top + skirt)", CatalogKind.Clothing, 40, "Tops", "top", "dress"),
+            new("top_jersey", "V-neck Tee", CatalogKind.Clothing, 60, "Tops", "top", "jersey"),
             new("hat_cap", "Baseball Cap", CatalogKind.Clothing, 30, "Hats", "hat", "cap"),
-            new("hat_beanie", "Beanie", CatalogKind.Clothing, 30, "Hats", "hat", "beanie"),
-            new("hat_bow", "Hair Bow", CatalogKind.Clothing, 25, "Hats", "hat", "bow"),
-            new("hat_party", "Party Hat", CatalogKind.Clothing, 50, "Hats", "hat", "party"),
-            new("hat_headphones", "Headphones", CatalogKind.Clothing, 60, "Hats", "hat", "headphones"),
-            new("hat_gradcap", "Graduation Cap", CatalogKind.Clothing, 100, "Hats", "hat", "gradcap"),
+            new("hat_beanie", "Bandana", CatalogKind.Clothing, 30, "Hats", "hat", "beanie"),
+            new("hat_bow", "Headband", CatalogKind.Clothing, 25, "Hats", "hat", "bow"),
+            new("hat_party", "Holiday Hat", CatalogKind.Clothing, 50, "Hats", "hat", "party"),
+            new("hat_headphones", "Sunglasses", CatalogKind.Clothing, 60, "Hats", "hat", "headphones"),
+            new("hat_gradcap", "Top Hat", CatalogKind.Clothing, 100, "Hats", "hat", "gradcap"),
             new("hat_crown", "Crown", CatalogKind.Clothing, 200, "Hats", "hat", "crown"),
         };
 
