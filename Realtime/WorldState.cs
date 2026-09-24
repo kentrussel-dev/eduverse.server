@@ -35,6 +35,17 @@ namespace EduVerse.Server.Realtime
             return steps <= 0 ? (X, Y) : Path[Math.Min(steps, Path.Count) - 1];
         }
 
+        /// <summary>Tiles still to walk after the one returned by <see cref="PositionAt"/>, so people who arrive later see the walk finish.</summary>
+        public List<(int X, int Y)> RemainingPath(DateTime now)
+        {
+            if (Path.Count == 0)
+            {
+                return new();
+            }
+            var steps = Math.Max(0, (int)Math.Ceiling((now - PathStartedAt).TotalSeconds / StepSeconds));
+            return Path.Skip(steps).ToList();
+        }
+
         /// <summary>The tile the avatar will end up on once it finishes walking.</summary>
         public (int X, int Y) Destination => Path.Count == 0 ? (X, Y) : Path[^1];
     }
@@ -114,7 +125,8 @@ namespace EduVerse.Server.Realtime
         {
             var (x, y) = o.PositionAt(now);
             return new OccupantDto(o.ConnectionId, o.Player.UserId.ToString(), o.Player.Name, o.Player.IsTeacher,
-                IsHost(o.Player), o.Player.Look, x, y, o.Muted, o.HandRaised, o.Dance, o.SittingOnFloor);
+                IsHost(o.Player), o.Player.Look, x, y, o.Muted, o.HandRaised, o.Dance, o.SittingOnFloor,
+                o.RemainingPath(now).Select(p => new[] { p.X, p.Y }).ToList());
         }
 
         public RoomInfoDto Info() => new(Id, Definition.Name, Definition.Description, Definition.Kind,

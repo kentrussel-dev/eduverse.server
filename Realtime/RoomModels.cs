@@ -98,7 +98,8 @@ namespace EduVerse.Server.Realtime
         bool Muted,
         bool HandRaised,
         int Dance,
-        bool SittingOnFloor);
+        bool SittingOnFloor,
+        List<int[]> WalkingTo);
 
     /// <summary>A chat line. WhisperTo is set for whispers, which only the two people and room hosts see.</summary>
     public record ChatMessageDto(string FromId, string Name, string Text, DateTime SentAt, bool System = false, string? WhisperTo = null);

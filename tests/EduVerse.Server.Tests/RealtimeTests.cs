@@ -144,6 +144,12 @@ namespace EduVerse.Server.Tests
             var occupant = world.RoomOf("c1")!.Occupants["c1"];
             Assert.Equal((0, 13), occupant.PositionAt(now));
             Assert.Equal((3, 10), occupant.PositionAt(now.AddSeconds(10)));
+
+            // Someone arriving mid-walk gets the rest of the walk.
+            var dto = world.RoomOf("c1")!.ToDto(occupant, now.AddSeconds(0.5));
+            Assert.Equal((2, 11), (dto.X, dto.Y));
+            Assert.Equal(new[] { new[] { 3, 10 } }, dto.WalkingTo);
+            Assert.Empty(world.RoomOf("c1")!.ToDto(occupant, now.AddSeconds(10)).WalkingTo);
         }
 
         [Fact]
