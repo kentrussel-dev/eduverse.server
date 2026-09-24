@@ -124,6 +124,12 @@ builder.Services.AddAuthentication(options =>
                 context.Token = accessToken;
             }
             return Task.CompletedTask;
+        },
+        OnAuthenticationFailed = context =>
+        {
+            var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+            logger.LogWarning("Rejected sign-in token for {Path}: {Reason}", context.Request.Path, context.Exception.Message);
+            return Task.CompletedTask;
         }
     };
 })
