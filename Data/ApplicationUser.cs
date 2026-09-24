@@ -35,6 +35,9 @@ namespace EduVerse.Server.Data
 
         public DateTime CreatedAt => createdAt;
 
+        /// <summary>The user's avatar, coins and inventory in the virtual world.</summary>
+        public Realtime.WorldProfile? WorldProfile { get; set; }
+
         public AccountType AccountType
         {
             get => accountType;

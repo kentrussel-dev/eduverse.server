@@ -72,12 +72,56 @@ dotnet ef database update
 dotnet run
 ```
 
+## Virtual World (Habbo-style rooms)
+
+The server also runs a real-time virtual world: students and teachers walk around isometric rooms as avatars, chat, and hold classes.
+
+- **Transport**: ASP.NET Core SignalR hub at `/hubs/world`
+- **Auth**: the JWT returned by `/api/auth/login` and `/api/auth/me`, sent as the `access_token` query parameter
+- **Code**: `Realtime/`
+  - `WorldHub.cs`: hub methods clients call (join, move, say, whisper, dance, build, shop, host tools)
+  - `WorldState.cs`: live rooms, who is where, walking, actions, building, bans, room finder
+  - `Catalog.cs`: shop items (furniture and clothing), free clothing styles, starter coins and furniture
+  - `UserProfiles.cs`: each player's look, coins, inventory and owned clothing (saved on the user document)
+  - `RoomTemplates.cs`: built-in rooms (Main Hall, Quiet Library, Classroom 101) and layouts
+  - `Pathfinder.cs`: A* pathfinding on the tile grid
+  - `ChatFilter.cs`: masks bad words (English and Filipino) and hides links, emails and phone numbers
+  - `RoomStore.cs`: saves user-created rooms and chat reports to MongoDB (`Rooms`, `ChatReports`)
+
+### Rules
+
+- The server decides where everyone is. Clients only send "walk to tile (x, y)".
+- Only teachers can create classrooms. Classrooms and private rooms aren't listed; others join with the 6-character room code.
+- Room finder tabs: Public (listed rooms), Popular (listed rooms with people in them), My rooms. Search matches room names and owners.
+- Hosts (a room's owner, or any teacher in the built-in Classroom 101) can mute, kick, turn on quiet mode, clear chat and write on the whiteboard.
+- Owners can also ban/unban, change room settings, delete the room (its furniture goes back to their inventory), and build: place, rotate and pick up furniture from their inventory.
+- Players can dance (4 styles), wave, sit on seats or the floor, and send emoji reactions from a fixed list.
+- Whispers are seen only by the sender, the target, and the room's hosts. They're filtered like normal chat and kept in the room history for reports.
+- Shop: players start with 200 coins and some furniture, and can claim 50 coins once a day. Paid clothing must be bought before it can be worn; the server checks this.
+- Names are shown as first name + last initial ("Juan D.").
+- Chat: max 200 characters, 5 messages per 6 seconds. There are no private messages.
+- One avatar per account: joining from a second window removes the first.
+
+### Running without MongoDB
+
+Set `Realtime:Store` to `InMemory` to keep rooms in memory (login still needs MongoDB):
+
+```bash
+dotnet user-secrets set "Realtime:Store" "InMemory"
+```
+
+### Tests
+
+```bash
+dotnet test tests/EduVerse.Server.Tests
+```
+
 ## API Documentation
 
 ### Authentication Endpoints
 
 - POST `/api/auth/register` - Register new user
-- POST `/api/auth/login` - Email/password login
+- POST `/api/auth/login` - Email/password login (returns a JWT in `token`)
 - GET `/api/auth/google/login` - Initiate Google OAuth
 - GET `/api/auth/google/callback` - Google OAuth callback
 - POST `/api/auth/logout` - Logout user
