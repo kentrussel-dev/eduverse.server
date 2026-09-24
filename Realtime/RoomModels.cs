@@ -82,6 +82,8 @@ namespace EduVerse.Server.Realtime
         public string Shoes { get; set; } = "#333333";
         public string Hat { get; set; } = "none";
         public string HatColor { get; set; } = "#e63946";
+        /// <summary>"boy" or "girl": picks which clothes the character editor shows first.</summary>
+        public string Gender { get; set; } = "boy";
 
         public static AvatarLook Default => new();
     }

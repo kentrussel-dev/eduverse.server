@@ -24,4 +24,8 @@
     <None Remove="tests\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="Realtime\FurniCatalog.json" />
+  </ItemGroup>
+
 </Project>

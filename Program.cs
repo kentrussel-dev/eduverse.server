@@ -65,7 +65,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.User.RequireUniqueEmail = true;
 
     // Email confirmation
-    options.SignIn.RequireConfirmedEmail = true;
+    options.SignIn.RequireConfirmedEmail = false; // development: no confirmation email needed
 });
 
 // Configure Authentication
@@ -122,6 +122,12 @@ builder.Services.AddAuthentication(options =>
             if (!string.IsNullOrEmpty(accessToken) && context.HttpContext.Request.Path.StartsWithSegments("/hubs"))
             {
                 context.Token = accessToken;
+            }
+            else if (string.IsNullOrEmpty(context.Request.Headers.Authorization)
+                && context.Request.Cookies.TryGetValue(EduVerse.Server.Controllers.AuthController.TokenCookie, out var cookieToken))
+            {
+                // A browser that signed in before is remembered by its token cookie.
+                context.Token = cookieToken;
             }
             return Task.CompletedTask;
         },
@@ -245,4 +251,4 @@ logger.LogInformation("EduVerse server starting...");
 logger.LogInformation($"Environment: {app.Environment.EnvironmentName}");
 logger.LogInformation($"CORS Origins: {string.Join(", ", builder.Configuration.GetSection("CORS:AllowedOrigins").Get<string[]>() ?? new[] { "http://localhost:3000" })}");
 
-app.Run();
+app.Run();

@@ -68,7 +68,9 @@ namespace EduVerse.Server.Controllers
                     IsTeacher = model.IsTeacher,
                     AccountType = AccountType.Email,
                     AuthProvider = "Email",
-                    EmailConfirmed = false // Requires confirmation
+                    Gender = model.Gender is "girl" or "boy" ? model.Gender : null,
+                    // During development accounts work right away (no confirmation email).
+                    EmailConfirmed = true
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
@@ -79,15 +81,7 @@ namespace EduVerse.Server.Controllers
                     return BadRequest(new { Message = result.Errors.First().Description });
                 }
 
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var confirmationLink = Url.Action("ConfirmEmail", "Auth", new { userId = user.Id, token }, Request.Scheme);
-
-                if (confirmationLink != null)
-                {
-                    await SendEmailConfirmation(user.Email, confirmationLink);
-                }
-
-                return Ok(new { Message = "Registration successful. Please check your email for confirmation." });
+                return SignedIn(user, "Registration successful");
             }
             catch (Exception ex)
             {
@@ -117,25 +111,12 @@ namespace EduVerse.Server.Controllers
                     return BadRequest(new { Message = "This account uses Google Sign-In. Please click the 'Sign in with Google' button." });
                 }
 
-                if (!await _userManager.IsEmailConfirmedAsync(user))
-                {
-                    return StatusCode(401, new { Message = "Please confirm your email address before logging in. Check your inbox for the confirmation link." });
-                }
                 var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
                 if (!result.Succeeded)
                 {
                     return BadRequest(new { Message = "Invalid email or password" });
-                }                // Return simple user data without cookies
-                return Ok(new
-                {
-                    Id = user.Id,
-                    Email = user.Email,
-                    FullName = user.FullName,
-                    IsTeacher = user.IsTeacher,
-                    Avatar = user.Avatar,
-                    Token = GenerateJwtToken(user),
-                    Message = "Login successful"
-                });
+                }
+                return SignedIn(user, "Login successful");
             }
             catch (Exception ex)
             {
@@ -150,6 +131,7 @@ namespace EduVerse.Server.Controllers
             try
             {
                 await _signInManager.SignOutAsync();
+                Response.Cookies.Delete(TokenCookie, CookieOptionsFor(DateTimeOffset.UtcNow.AddDays(-1)));
                 _logger.LogInformation("User logged out successfully");
                 return Ok(new { Message = "Logout successful" });
             }
@@ -414,6 +396,25 @@ namespace EduVerse.Server.Controllers
                 return Unauthorized();
             }
 
+            return SignedIn(user, "Signed in");
+        }
+
+        /// <summary>The cookie that remembers a signed-in browser (it holds the same token the app uses).</summary>
+        public const string TokenCookie = "EduVerse.Token";
+
+        private CookieOptions CookieOptionsFor(DateTimeOffset expires) => new()
+        {
+            HttpOnly = true,
+            SameSite = SameSiteMode.Lax,
+            Secure = Request.IsHttps,
+            Expires = expires,
+        };
+
+        /// <summary>Returns the user with a fresh token, and saves the token in a cookie so the browser stays signed in.</summary>
+        private IActionResult SignedIn(ApplicationUser user, string message)
+        {
+            var token = GenerateJwtToken(user);
+            Response.Cookies.Append(TokenCookie, token, CookieOptionsFor(DateTimeOffset.UtcNow.AddMinutes(TokenMinutes)));
             return Ok(new
             {
                 user.Id,
@@ -421,9 +422,13 @@ namespace EduVerse.Server.Controllers
                 user.FullName,
                 user.Avatar,
                 user.IsTeacher,
-                Token = GenerateJwtToken(user)
+                user.Gender,
+                Token = token,
+                Message = message
             });
         }
+
+        private int TokenMinutes => Convert.ToInt32(_configuration["Jwt:ExpiryInMinutes"] ?? "43200");
 
         private string GenerateJwtToken(ApplicationUser user)
         {
@@ -433,13 +438,14 @@ namespace EduVerse.Server.Controllers
                 new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
                 new Claim(ClaimTypes.Name, user.FullName ?? string.Empty),
                 new Claim("avatar", user.Avatar ?? "default.png"),
-                new Claim("isTeacher", user.IsTeacher.ToString())
+                new Claim("isTeacher", user.IsTeacher.ToString()),
+                new Claim("gender", user.Gender ?? string.Empty)
             };
 
             var jwtKey = _configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not configured");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expiry = DateTime.UtcNow.AddMinutes(Convert.ToInt32(_configuration["Jwt:ExpiryInMinutes"] ?? "1440"));
+            var expiry = DateTime.UtcNow.AddMinutes(TokenMinutes);
 
             var token = new JwtSecurityToken(
                 _configuration["Jwt:Issuer"],
@@ -556,4 +562,4 @@ namespace EduVerse.Server.Controllers
         }
     }
 
-}
+}

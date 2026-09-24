@@ -11,7 +11,7 @@ namespace EduVerse.Server.Tests
         {
             var profile = await new ProfileService(new InMemoryProfileStore()).GetAsync(User);
             Assert.Equal(Catalog.StarterCoins, profile.Coins);
-            Assert.Equal(2, profile.Furni["chair"]);
+            Assert.Equal(100, profile.Furni.Count(kv => kv.Value > 0));
         }
 
         [Fact]
@@ -32,7 +32,10 @@ namespace EduVerse.Server.Tests
         public async Task CannotBuyWithoutEnoughCoins()
         {
             var shop = new ProfileService(new InMemoryProfileStore());
-            await shop.BuyAsync(User, "hat_crown"); // 200, all starter coins
+            for (var i = 0; i < Catalog.StarterCoins / 100; i++)
+            {
+                await shop.BuyAsync(User, "trophy"); // 100 each, until the starter coins are gone
+            }
             var ex = await Assert.ThrowsAsync<WorldException>(() => shop.BuyAsync(User, "duck"));
             Assert.Contains("more coins", ex.Message);
         }
@@ -69,10 +72,11 @@ namespace EduVerse.Server.Tests
         public async Task InventoryTakeAndGive()
         {
             var shop = new ProfileService(new InMemoryProfileStore());
-            await shop.TakeFurniAsync(User, "sofa");
-            await Assert.ThrowsAsync<WorldException>(() => shop.TakeFurniAsync(User, "sofa"));
-            var profile = await shop.GiveFurniAsync(User, new[] { "sofa", "not_a_furni" });
-            Assert.Equal(1, profile.Furni["sofa"]);
+            var type = Catalog.StarterFurni.Keys.First();
+            await shop.TakeFurniAsync(User, type);
+            await Assert.ThrowsAsync<WorldException>(() => shop.TakeFurniAsync(User, type));
+            var profile = await shop.GiveFurniAsync(User, new[] { type, "not_a_furni" });
+            Assert.Equal(1, profile.Furni[type]);
             Assert.False(profile.Furni.ContainsKey("not_a_furni"));
         }
     }

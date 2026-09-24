@@ -1,3 +1,6 @@
+using System.Reflection;
+using System.Text.Json;
+
 namespace EduVerse.Server.Realtime
 {
     public enum CatalogKind
@@ -13,10 +16,20 @@ namespace EduVerse.Server.Realtime
     /// <summary>Everything in the shop, plus the free clothing styles every avatar can use.</summary>
     public static class Catalog
     {
-        public const int StarterCoins = 200;
+        public const int StarterCoins = 1000;
         public const int DailyBonus = 50;
 
-        public static readonly IReadOnlyList<CatalogItem> Items = new List<CatalogItem>
+        /// <summary>
+        /// Furniture rendered from the CC0 Kenney and KayKit 3D kits (see FurniCatalog.json and
+        /// public/furni in the frontend), with whether avatars sit on it or walk over it.
+        /// </summary>
+        public static readonly IReadOnlyList<FurniAsset> Assets = LoadAssets();
+
+        public static readonly IReadOnlyList<CatalogItem> Items = BuiltInItems()
+            .Concat(Assets.Select(a => new CatalogItem(a.Id, a.Name, CatalogKind.Furni, PriceFor(a.Category), a.Category)))
+            .ToList();
+
+        private static List<CatalogItem> BuiltInItems() => new()
         {
             // Furniture
             new("chair", "School Chair", CatalogKind.Furni, 10, "Seating"),
@@ -55,6 +68,21 @@ namespace EduVerse.Server.Realtime
             new("hat_crown", "Crown", CatalogKind.Clothing, 200, "Hats", "hat", "crown"),
         };
 
+        private static int PriceFor(string category) => category switch
+        {
+            "Rugs" or "Plants" => 10,
+            "Seating" or "Lights" or "Decor" => 20,
+            "Bedroom" or "Bathroom" or "Fun" => 40,
+            _ => 25,
+        };
+
+        private static List<FurniAsset> LoadAssets()
+        {
+            using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("EduVerse.Server.Realtime.FurniCatalog.json")
+                ?? throw new InvalidOperationException("FurniCatalog.json is missing from the build.");
+            return JsonSerializer.Deserialize<List<FurniAsset>>(stream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
+        }
+
         /// <summary>Styles anyone can wear without buying them.</summary>
         public static readonly IReadOnlyDictionary<string, string[]> FreeStyles = new Dictionary<string, string[]>
         {
@@ -64,16 +92,30 @@ namespace EduVerse.Server.Realtime
             ["hat"] = new[] { "none" },
         };
 
-        /// <summary>Furniture every new player starts with so they can decorate right away.</summary>
-        public static readonly IReadOnlyDictionary<string, int> StarterFurni = new Dictionary<string, int>
+        /// <summary>
+        /// Furniture every new player starts with so they can decorate right away: one each of
+        /// 100 different items, picked from every category in turn.
+        /// </summary>
+        public static readonly IReadOnlyDictionary<string, int> StarterFurni = PickStarterFurni(100);
+
+        private static Dictionary<string, int> PickStarterFurni(int count)
         {
-            ["chair"] = 2,
-            ["table"] = 1,
-            ["plant"] = 2,
-            ["rug"] = 2,
-            ["sofa"] = 1,
-            ["block_blue"] = 3,
-        };
+            var queues = Assets.GroupBy(a => a.Category).Select(g => new Queue<FurniAsset>(g)).ToList();
+            var picked = new Dictionary<string, int>();
+            while (picked.Count < count && queues.Any(q => q.Count > 0))
+            {
+                foreach (var queue in queues.Where(q => q.Count > 0))
+                {
+                    if (picked.Count < count)
+                    {
+                        picked[queue.Dequeue().Id] = 1;
+                    }
+                }
+            }
+            return picked;
+        }
+
+        public static FurniAsset? Asset(string type) => Assets.FirstOrDefault(a => a.Id == type);
 
         public static CatalogItem? Find(string id) => Items.FirstOrDefault(i => i.Id == id);
 
@@ -86,4 +128,7 @@ namespace EduVerse.Server.Realtime
         public static bool IsKnownStyle(string slot, string value) =>
             (FreeStyles.TryGetValue(slot, out var free) && free.Contains(value)) || ClothingFor(slot, value) != null;
     }
+
+    /// <summary>A piece of furniture from the 3D kits.</summary>
+    public record FurniAsset(string Id, string Name, string Category, bool Seat, bool Walk);
 }

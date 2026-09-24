@@ -735,8 +735,8 @@ namespace EduVerse.Server.Realtime
                 {
                     throw new WorldException("Keep the door clear.");
                 }
-                if (room.Definition.Furni.Any(f => f.X == x && f.Y == y && f.Type != "rug") && type != "rug" ||
-                    room.Definition.Furni.Any(f => f.X == x && f.Y == y && f.Type == "rug") && type == "rug")
+                var isRug = RoomTemplates.IsRug(type);
+                if (room.Definition.Furni.Any(f => f.X == x && f.Y == y && RoomTemplates.IsRug(f.Type) == isRug))
                 {
                     throw new WorldException("Something is already there.");
                 }
