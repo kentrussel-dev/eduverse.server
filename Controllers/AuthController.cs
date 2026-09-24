@@ -132,6 +132,8 @@ namespace EduVerse.Server.Controllers
                     Email = user.Email,
                     FullName = user.FullName,
                     IsTeacher = user.IsTeacher,
+                    Avatar = user.Avatar,
+                    Token = GenerateJwtToken(user),
                     Message = "Login successful"
                 });
             }
@@ -403,6 +405,7 @@ namespace EduVerse.Server.Controllers
 
         [Authorize]
         [HttpGet("me")]
+        [Authorize(AuthenticationSchemes = "Bearer,Identity.Application")]
         public async Task<IActionResult> GetCurrentUser()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -417,7 +420,8 @@ namespace EduVerse.Server.Controllers
                 user.Email,
                 user.FullName,
                 user.Avatar,
-                user.IsTeacher
+                user.IsTeacher,
+                Token = GenerateJwtToken(user)
             });
         }
 
@@ -435,7 +439,7 @@ namespace EduVerse.Server.Controllers
             var jwtKey = _configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not configured");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expiry = DateTime.Now.AddMinutes(Convert.ToInt32(_configuration["Jwt:ExpiryInMinutes"]));
+            var expiry = DateTime.UtcNow.AddMinutes(Convert.ToInt32(_configuration["Jwt:ExpiryInMinutes"] ?? "1440"));
 
             var token = new JwtSecurityToken(
                 _configuration["Jwt:Issuer"],
@@ -534,7 +538,8 @@ namespace EduVerse.Server.Controllers
                 user.Email,
                 user.FullName,
                 user.Avatar,
-                user.IsTeacher
+                user.IsTeacher,
+                Token = GenerateJwtToken(user)
             });
         }
         public class UpdateProfileModel
@@ -551,4 +556,4 @@ namespace EduVerse.Server.Controllers
         }
     }
 
-}
+}

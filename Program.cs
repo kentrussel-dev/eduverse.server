@@ -1,4 +1,5 @@
 using EduVerse.Server.Data;
+using EduVerse.Server.Realtime;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
@@ -33,7 +34,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000")
+        policy.WithOrigins(builder.Configuration.GetSection("CORS:AllowedOrigins").Get<string[]>() ?? new[] { "http://localhost:3000" })
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
@@ -69,7 +70,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 // Configure Authentication
 var jwtSettings = builder.Configuration.GetSection("Jwt");
-var key = Encoding.ASCII.GetBytes(jwtSettings["Key"] ?? throw new InvalidOperationException("JWT Key not configured"));
+var key = Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? throw new InvalidOperationException("JWT Key not configured"));
 
 builder.Services.AddDataProtection()
     .SetApplicationName("EduVerse");
@@ -98,6 +99,33 @@ builder.Services.AddAuthentication(options =>
     options.Cookie.SameSite = SameSiteMode.Lax;
     options.Cookie.SecurePolicy = CookieSecurePolicy.None; // For development
     options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+})
+.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = !string.IsNullOrEmpty(jwtSettings["Issuer"]),
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidateAudience = !string.IsNullOrEmpty(jwtSettings["Audience"]),
+        ValidAudience = jwtSettings["Audience"],
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.FromMinutes(1)
+    };
+    // Browsers can't set headers on WebSocket requests, so SignalR sends the token in the query string.
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["access_token"];
+            if (!string.IsNullOrEmpty(accessToken) && context.HttpContext.Request.Path.StartsWithSegments("/hubs"))
+            {
+                context.Token = accessToken;
+            }
+            return Task.CompletedTask;
+        }
+    };
 })
 .AddGoogle(options =>
 {
@@ -142,6 +170,20 @@ builder.Services.AddAuthentication(options =>
     options.SaveTokens = true;
 });
 
+// Virtual world (rooms, avatars, chat). Set "Realtime:Store" to "InMemory" to run without MongoDB.
+builder.Services.AddSignalR();
+if (string.Equals(builder.Configuration["Realtime:Store"], "InMemory", StringComparison.OrdinalIgnoreCase))
+{
+    builder.Services.AddSingleton<IRoomStore, InMemoryRoomStore>();
+    builder.Services.AddSingleton<IUserProfiles, InMemoryUserProfiles>();
+}
+else
+{
+    builder.Services.AddSingleton<IRoomStore, MongoRoomStore>();
+    builder.Services.AddSingleton<IUserProfiles, IdentityUserProfiles>();
+}
+builder.Services.AddSingleton<WorldState>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -166,6 +208,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<WorldHub>("/hubs/world");
 
 // Add direct handler for Google signin callback
 app.MapGet("/signin-google", async (HttpContext context) =>
@@ -186,4 +229,4 @@ logger.LogInformation("EduVerse server starting...");
 logger.LogInformation($"Environment: {app.Environment.EnvironmentName}");
 logger.LogInformation($"CORS Origins: {string.Join(", ", builder.Configuration.GetSection("CORS:AllowedOrigins").Get<string[]>() ?? new[] { "http://localhost:3000" })}");
 
-app.Run();
+app.Run();
