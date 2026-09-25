@@ -163,18 +163,22 @@ namespace EduVerse.Server.Realtime
             }
         }
 
-        public Task<WorldProfile> BuyAsync(Guid userId, string itemId) => ChangeAsync(userId, profile =>
+        /// <summary>Buys an item; admins (free = true) have unlimited coins.</summary>
+        public Task<WorldProfile> BuyAsync(Guid userId, string itemId, bool free = false) => ChangeAsync(userId, profile =>
         {
             var item = Catalog.Find(itemId) ?? throw new WorldException("That item isn't in the shop.");
             if (item.Kind == CatalogKind.Clothing && profile.Clothing.Contains(item.Id))
             {
                 throw new WorldException("You already own that.");
             }
-            if (profile.Coins < item.Price)
+            if (!free && profile.Coins < item.Price)
             {
                 throw new WorldException($"You need {item.Price - profile.Coins} more coins.");
             }
-            profile.Coins -= item.Price;
+            if (!free)
+            {
+                profile.Coins -= item.Price;
+            }
             if (item.Kind == CatalogKind.Furni)
             {
                 profile.Furni[item.Id] = profile.Furni.GetValueOrDefault(item.Id) + 1;

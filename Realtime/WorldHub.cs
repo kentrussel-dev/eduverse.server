@@ -106,7 +106,7 @@ namespace EduVerse.Server.Realtime
 
         public Task<ProfileDto> Buy(string itemId) => Guard(async () =>
         {
-            var profile = await _profiles.BuyAsync(Player.UserId, itemId);
+            var profile = await _profiles.BuyAsync(Player.UserId, itemId, Player.IsAdmin);
             _logger.LogInformation("{UserId} bought {ItemId}", Player.UserId, itemId);
             return _profiles.ToDto(Player, profile);
         });
