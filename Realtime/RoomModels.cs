@@ -147,6 +147,12 @@ namespace EduVerse.Server.Realtime
     public static class RoomStyles
     {
         public static readonly string[] Wallpapers = { "default", "sky", "mint", "peach", "lavender", "sunny", "stripes", "brick", "wood", "panel", "night", "candy" };
+        private static readonly System.Text.RegularExpressions.Regex Solid = new("^solid-[0-9a-f]{6}$");
+
+        /// <summary>A named wallpaper, or a plain colour "solid-rrggbb".</summary>
+        public static bool IsWallpaper(string? id) => id != null && (Wallpapers.Contains(id) || Solid.IsMatch(id));
+        public static bool IsFloor(string? id) => id != null && (Floors.Contains(id) || Solid.IsMatch(id));
+
         public static readonly string[] Floors = { "default", "oak", "checker", "blue-tiles", "grass", "red-carpet", "marble", "pink", "dark-wood", "sand", "ice", "mint-tiles" };
     }
 

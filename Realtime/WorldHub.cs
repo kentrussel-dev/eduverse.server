@@ -288,6 +288,9 @@ namespace EduVerse.Server.Realtime
             await SendProfileAsync(await _profiles.GiveFurniAsync(Player.UserId, new[] { item.Type }));
         });
 
+        /// <summary>The free empty room shapes for the create-room window.</summary>
+        public List<RoomTemplates.RoomShape> GetLayouts() => RoomTemplates.ShapeList();
+
         public Task PickUpAll() => Guard(async () =>
         {
             var (room, items) = await _world.PickUpAllAsync(Context.ConnectionId);

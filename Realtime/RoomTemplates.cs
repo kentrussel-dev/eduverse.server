@@ -14,7 +14,44 @@ namespace EduVerse.Server.Realtime
         // Furni that avatars sit on when they stop on it.
         private static readonly HashSet<string> Seats = new() { "chair", "sofa", "stool", "beanbag" };
 
-        public static readonly IReadOnlyList<string> Names = new[] { "apartment", "house", "classroom", "study_hall", "lounge", "empty" };
+        public static readonly IReadOnlyList<string> Names =
+            new[] { "apartment", "house", "classroom", "study_hall", "lounge", "empty" }.Concat(ShapeList().Select(s => s.Id)).ToList();
+
+        /// <summary>An empty room shape to build in (free, like Habbo's room layouts).</summary>
+        public record RoomShape(string Id, string Name, List<string> Layout, int DoorX, int DoorY)
+        {
+            public int Tiles => Layout.Sum(r => r.Count(c => c != 'x'));
+        }
+
+        private static RoomShape Shape(string id, string name, int w, int d, Func<int, int, bool> floor, int? doorY = null)
+        {
+            var layout = Enumerable.Range(0, d).Select(y => new string(Enumerable.Range(0, w).Select(x => floor(x, y) ? '0' : 'x').ToArray())).ToList();
+            var door = doorY ?? Enumerable.Range(0, d).Last(y => layout[y][0] == '0');
+            return new RoomShape(id, name, layout, 0, door);
+        }
+
+        private static List<RoomShape>? _shapes;
+
+        /// <summary>Empty room shapes of different sizes.</summary>
+        public static List<RoomShape> ShapeList() => _shapes ??= new List<RoomShape>
+        {
+            Shape("shape_tiny", "Tiny", 6, 6, (x, y) => true),
+            Shape("shape_small", "Small", 8, 8, (x, y) => true),
+            Shape("shape_medium", "Medium", 10, 10, (x, y) => true),
+            Shape("shape_wide", "Wide", 16, 8, (x, y) => true),
+            Shape("shape_long", "Long hall", 6, 18, (x, y) => true),
+            Shape("shape_large", "Large", 14, 14, (x, y) => true),
+            Shape("shape_huge", "Huge", 20, 20, (x, y) => true),
+            Shape("shape_giant", "Giant", 28, 26, (x, y) => true),
+            Shape("shape_l", "L-shape", 14, 14, (x, y) => !(x >= 7 && y < 7)),
+            Shape("shape_u", "U-shape", 14, 12, (x, y) => !(x >= 5 && x <= 8 && y < 7)),
+            Shape("shape_t", "T-shape", 15, 13, (x, y) => y < 5 || (x >= 5 && x <= 9), 2),
+            Shape("shape_cross", "Cross", 15, 15, (x, y) => (x >= 5 && x <= 9) || (y >= 5 && y <= 9), 7),
+            Shape("shape_courtyard", "Courtyard", 14, 14, (x, y) => !(x >= 5 && x <= 8 && y >= 5 && y <= 8)),
+            Shape("shape_ring", "Ring", 16, 16, (x, y) => x < 4 || y < 4 || x > 11 || y > 11),
+            Shape("shape_steps", "Steps", 16, 16, (x, y) => x + y >= 6 && x + y <= 24 && Math.Abs(x - y) <= 9),
+            Shape("shape_zigzag", "Zigzag", 18, 12, (x, y) => (x / 6) % 2 == 0 ? y >= 3 : y < 9),
+        };
 
         public static bool IsBlocking(string type) =>
             Blocking.Contains(type) || Catalog.Asset(type) is { Seat: false, Walk: false };
@@ -24,6 +61,11 @@ namespace EduVerse.Server.Realtime
 
         public static RoomDefinition Create(string template)
         {
+            var shape = ShapeList().FirstOrDefault(s => s.Id == template);
+            if (shape != null)
+            {
+                return new RoomDefinition { Layout = shape.Layout.ToList(), DoorX = shape.DoorX, DoorY = shape.DoorY, MaxUsers = Math.Clamp(shape.Tiles / 4, 15, 75) };
+            }
             return template switch
             {
                 "classroom" => Classroom(),
