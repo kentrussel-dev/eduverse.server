@@ -41,6 +41,10 @@ namespace EduVerse.Server.Realtime
         public int DoorY { get; set; }
         public List<FurniItem> Furni { get; set; } = new();
         public int MaxUsers { get; set; } = 30;
+
+        /// <summary>Wallpaper and floor theme ids (see RoomStyles).</summary>
+        public string Wallpaper { get; set; } = "default";
+        public string Floor { get; set; } = "default";
         public bool BuiltIn { get; set; }
         public List<RoomBan> Bans { get; set; } = new();
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -135,7 +139,16 @@ namespace EduVerse.Server.Realtime
         bool YouAreHost,
         bool YouAreOwner,
         int MaxUsers,
-        List<RoomBan> Bans);
+        List<RoomBan> Bans,
+        string Wallpaper = "default",
+        string Floor = "default");
+
+    /// <summary>The wallpapers and floors a room owner can pick (drawn by the frontend).</summary>
+    public static class RoomStyles
+    {
+        public static readonly string[] Wallpapers = { "default", "sky", "mint", "peach", "lavender", "sunny", "stripes", "brick", "wood", "panel", "night", "candy" };
+        public static readonly string[] Floors = { "default", "oak", "checker", "blue-tiles", "grass", "red-carpet", "marble", "pink", "dark-wood", "sand", "ice", "mint-tiles" };
+    }
 
     /// <summary>The shared drawing board: the scene, a picture for the wall, and who may draw.</summary>
     public record BoardDto(string Scene, string Preview, bool Everyone, List<string> Drawers);

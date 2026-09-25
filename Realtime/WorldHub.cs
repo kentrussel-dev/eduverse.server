@@ -288,6 +288,22 @@ namespace EduVerse.Server.Realtime
             await SendProfileAsync(await _profiles.GiveFurniAsync(Player.UserId, new[] { item.Type }));
         });
 
+        public Task PickUpAll() => Guard(async () =>
+        {
+            var (room, items) = await _world.PickUpAllAsync(Context.ConnectionId);
+            foreach (var item in items)
+            {
+                await Clients.Group(Group(room.Id)).SendAsync("furniRemoved", item.Id);
+            }
+            await SendProfileAsync(await _profiles.GiveFurniAsync(Player.UserId, items.Select(i => i.Type)));
+        });
+
+        public Task SetRoomStyle(string wallpaper, string floor) => Guard(async () =>
+        {
+            var room = await _world.SetRoomStyleAsync(Context.ConnectionId, wallpaper, floor);
+            await Clients.Group(Group(room.Id)).SendAsync("roomStyle", wallpaper, floor);
+        });
+
         // ---- host tools ----
 
         public Task Mute(string targetId, bool muted) => Guard(async () =>
