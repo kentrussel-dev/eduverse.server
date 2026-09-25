@@ -95,6 +95,15 @@ namespace EduVerse.Server.Realtime
         public string Whiteboard { get; set; } = string.Empty;
         public bool QuietMode { get; set; }
 
+        /// <summary>The shared drawing board (Excalidraw scene JSON) and a small picture of it for the wall.</summary>
+        public string BoardScene { get; set; } = string.Empty;
+        public string BoardPreview { get; set; } = string.Empty;
+        /// <summary>Whether everyone may draw; otherwise only hosts and the people they picked.</summary>
+        public bool BoardEveryone { get; set; }
+        public HashSet<string> BoardDrawers { get; } = new();
+
+        public BoardDto Board() => new(BoardScene, BoardPreview, BoardEveryone, BoardDrawers.Where(Occupants.ContainsKey).ToList());
+
         public string Id => Definition.Id;
 
         public static string NewFurniId() => Convert.ToHexString(RandomNumberGenerator.GetBytes(6)).ToLowerInvariant();
@@ -468,6 +477,7 @@ namespace EduVerse.Server.Realtime
                     room.Chat.Where(m => m.WhisperTo == null).ToList(),
                     room.Whiteboard,
                     room.QuietMode,
+                    room.BoardPreview,
                     connectionId,
                     room.IsHost(player),
                     room.IsOwner(player),
@@ -861,6 +871,81 @@ namespace EduVerse.Server.Realtime
                 throw new WorldException("You can't do that to another host.");
             }
             return target;
+        }
+
+        public const int MaxBoardScene = 2_000_000;
+        public const int MaxBoardPreview = 400_000;
+
+        /// <summary>Saves a new drawing. Hosts can always draw; others only when the host allows it.</summary>
+        public RoomRuntime UpdateBoard(string connectionId, string? scene, string? preview)
+        {
+            var room = RoomOf(connectionId) ?? throw new WorldException("You're not in a room.");
+            scene ??= string.Empty;
+            preview ??= string.Empty;
+            if (scene.Length > MaxBoardScene)
+            {
+                throw new WorldException("The board is too full. Clear some of it first.");
+            }
+            if (preview.Length > MaxBoardPreview || (preview.Length > 0 && !preview.StartsWith("data:image/png;base64,") && !preview.StartsWith("data:image/jpeg;base64,")))
+            {
+                preview = string.Empty;
+            }
+            lock (room.Sync)
+            {
+                if (!room.Occupants.TryGetValue(connectionId, out var me))
+                {
+                    throw new WorldException("You're not in a room.");
+                }
+                if (!room.IsHost(me.Player) && !room.BoardEveryone && !room.BoardDrawers.Contains(connectionId))
+                {
+                    throw new WorldException("Ask your teacher to let you draw on the board.");
+                }
+                room.BoardScene = scene;
+                room.BoardPreview = preview;
+            }
+            return room;
+        }
+
+        public RoomRuntime SetBoardAccess(string hostConnectionId, bool everyone)
+        {
+            var room = RequireHost(hostConnectionId);
+            lock (room.Sync)
+            {
+                room.BoardEveryone = everyone;
+            }
+            return room;
+        }
+
+        public RoomRuntime AllowBoardDrawer(string hostConnectionId, string occupantId, bool allowed)
+        {
+            var room = RequireHost(hostConnectionId);
+            lock (room.Sync)
+            {
+                if (!room.Occupants.ContainsKey(occupantId))
+                {
+                    throw new WorldException("That person isn't here anymore.");
+                }
+                if (allowed)
+                {
+                    room.BoardDrawers.Add(occupantId);
+                }
+                else
+                {
+                    room.BoardDrawers.Remove(occupantId);
+                }
+            }
+            return room;
+        }
+
+        public RoomRuntime ClearBoard(string hostConnectionId)
+        {
+            var room = RequireHost(hostConnectionId);
+            lock (room.Sync)
+            {
+                room.BoardScene = string.Empty;
+                room.BoardPreview = string.Empty;
+            }
+            return room;
         }
 
         public (RoomRuntime Room, string Text) SetWhiteboard(string hostConnectionId, string text)

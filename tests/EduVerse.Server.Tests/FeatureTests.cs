@@ -249,5 +249,26 @@ namespace EduVerse.Server.Tests
             world.CheckEmote("guest", "❤️");
             Assert.Throws<WorldException>(() => world.CheckEmote("guest", "<script>"));
         }
+
+        [Fact]
+        public async Task OnlyHostsAndAllowedPeopleDrawOnTheBoard()
+        {
+            var (world, _, _) = await WorldWithRoom(); // the owner and a guest are already inside
+            var ex = Assert.Throws<WorldException>(() => world.UpdateBoard("guest", "{}", ""));
+            Assert.Contains("teacher", ex.Message);
+            world.UpdateBoard("owner", "{\"elements\":[]}", "data:image/png;base64,AAAA");
+            Assert.Throws<WorldException>(() => world.SetBoardAccess("guest", true));
+            world.AllowBoardDrawer("owner", "guest", true);
+            world.UpdateBoard("guest", "{\"elements\":[1]}", "javascript:alert(1)");
+            var room = world.RoomOf("guest")!;
+            Assert.Equal("{\"elements\":[1]}", room.BoardScene);
+            Assert.Equal(string.Empty, room.BoardPreview); // not an image, so dropped
+            world.AllowBoardDrawer("owner", "guest", false);
+            Assert.Throws<WorldException>(() => world.UpdateBoard("guest", "{}", ""));
+            world.SetBoardAccess("owner", true);
+            world.UpdateBoard("guest", "{}", "");
+            world.ClearBoard("owner");
+            Assert.Equal(string.Empty, room.BoardScene);
+        }
     }
 }

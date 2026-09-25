@@ -317,6 +317,51 @@ namespace EduVerse.Server.Realtime
             await Clients.Caller.SendAsync("roomSettings", new { bans = room.Info().Bans });
         });
 
+        // ---- the drawing board ----
+
+        public Task<BoardDto> GetBoard() => Guard(() =>
+        {
+            var room = _world.RoomOf(Context.ConnectionId) ?? throw new WorldException("You're not in a room.");
+            lock (room.Sync)
+            {
+                return Task.FromResult(room.Board());
+            }
+        });
+
+        public Task UpdateBoard(string scene, string preview) => Guard(async () =>
+        {
+            var room = _world.UpdateBoard(Context.ConnectionId, scene, preview);
+            await Clients.OthersInGroup(Group(room.Id)).SendAsync("boardUpdated", scene ?? string.Empty, room.BoardPreview, Context.ConnectionId);
+        });
+
+        public Task ClearBoard() => Guard(async () =>
+        {
+            var room = _world.ClearBoard(Context.ConnectionId);
+            await Clients.Group(Group(room.Id)).SendAsync("boardUpdated", string.Empty, string.Empty, Context.ConnectionId);
+        });
+
+        public Task SetBoardAccess(bool everyone) => Guard(async () =>
+        {
+            var room = _world.SetBoardAccess(Context.ConnectionId, everyone);
+            await SendBoardAccessAsync(room);
+        });
+
+        public Task AllowBoardDrawer(string occupantId, bool allowed) => Guard(async () =>
+        {
+            var room = _world.AllowBoardDrawer(Context.ConnectionId, occupantId, allowed);
+            await SendBoardAccessAsync(room);
+        });
+
+        private async Task SendBoardAccessAsync(RoomRuntime room)
+        {
+            BoardDto board;
+            lock (room.Sync)
+            {
+                board = room.Board();
+            }
+            await Clients.Group(Group(room.Id)).SendAsync("boardAccess", new { board.Everyone, board.Drawers });
+        }
+
         public Task SetWhiteboard(string text) => Guard(async () =>
         {
             var (room, cleaned) = _world.SetWhiteboard(Context.ConnectionId, text);
