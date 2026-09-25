@@ -130,5 +130,6 @@ namespace EduVerse.Server.Realtime
     }
 
     /// <summary>A piece of furniture from the 3D kits.</summary>
-    public record FurniAsset(string Id, string Name, string Category, bool Seat, bool Walk);
+    /// <remarks>W x D is the footprint in tiles when facing sw/ne (swapped when facing se/nw).</remarks>
+    public record FurniAsset(string Id, string Name, string Category, bool Seat, bool Walk, int W = 1, int D = 1);
 }
