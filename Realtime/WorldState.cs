@@ -3,7 +3,8 @@ using System.Security.Cryptography;
 
 namespace EduVerse.Server.Realtime
 {
-    public record PlayerInfo(Guid UserId, string Name, bool IsTeacher, AvatarLook Look);
+    /// <summary>IsAdmin: a site admin (Admin:Emails in settings) who can redesign the built-in rooms.</summary>
+    public record PlayerInfo(Guid UserId, string Name, bool IsTeacher, AvatarLook Look, bool IsAdmin = false);
 
     /// <summary>Someone standing in a room. One per SignalR connection.</summary>
     public class Occupant
@@ -140,7 +141,7 @@ namespace EduVerse.Server.Realtime
         }
 
         /// <summary>The room's owner. Owners build, change settings, and ban.</summary>
-        public bool IsOwner(PlayerInfo player) => Definition.OwnerId == player.UserId;
+        public bool IsOwner(PlayerInfo player) => Definition.OwnerId == player.UserId || (player.IsAdmin && Definition.BuiltIn);
 
         /// <summary>Hosts can moderate: the room's owner, or any teacher in a built-in classroom.</summary>
         public bool IsHost(PlayerInfo player) =>
