@@ -130,11 +130,15 @@ namespace EduVerse.Server.Realtime
         List<ChatMessageDto> Chat,
         string Whiteboard,
         bool QuietMode,
+        string BoardPreview,
         string YouId,
         bool YouAreHost,
         bool YouAreOwner,
         int MaxUsers,
         List<RoomBan> Bans);
+
+    /// <summary>The shared drawing board: the scene, a picture for the wall, and who may draw.</summary>
+    public record BoardDto(string Scene, string Preview, bool Everyone, List<string> Drawers);
 
     public record CreateRoomRequest(string Name, string Description, RoomKind Kind, string Template);
 
