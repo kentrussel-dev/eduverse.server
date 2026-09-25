@@ -26,14 +26,15 @@ namespace EduVerse.Server.Tests
             foreach (var item in room.Furni)
             {
                 Assert.True(Catalog.IsFurniType(item.Type) || DrawnTypes.Contains(item.Type), $"{name}: unknown furni {item.Type}");
-                Assert.True(IsFloor(item.X, item.Y), $"{name}: {item.Type} at {item.X},{item.Y} is off the floor");
-                Assert.False(item.X == room.DoorX && item.Y == room.DoorY && !RoomTemplates.IsRug(item.Type), $"{name}: {item.Type} blocks the door");
+                var tiles = RoomTemplates.Footprint(item).ToList();
+                Assert.True(item.Type == "whiteboard" || tiles.All(t => IsFloor(t.X, t.Y)), $"{name}: {item.Type} at {item.X},{item.Y} is off the floor");
+                Assert.False(tiles.Contains((room.DoorX, room.DoorY)) && !RoomTemplates.IsRug(item.Type), $"{name}: {item.Type} blocks the door");
             }
             var solid = room.Furni.Where(f => !RoomTemplates.IsRug(f.Type) && f.Type != "whiteboard")
-                .GroupBy(f => (f.X, f.Y)).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+                .SelectMany(f => RoomTemplates.Footprint(f)).GroupBy(t => t).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
             Assert.True(solid.Count == 0, $"{name}: stacked furni at {string.Join(" ", solid)}");
 
-            var blocked = room.Furni.Where(f => RoomTemplates.IsBlocking(f.Type)).Select(f => (f.X, f.Y)).ToHashSet();
+            var blocked = room.Furni.Where(f => RoomTemplates.IsBlocking(f.Type)).SelectMany(f => RoomTemplates.Footprint(f)).ToHashSet();
             var seen = new HashSet<(int, int)> { (room.DoorX, room.DoorY) };
             var queue = new Queue<(int X, int Y)>(seen);
             while (queue.Count > 0)

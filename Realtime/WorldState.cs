@@ -113,6 +113,30 @@ namespace EduVerse.Server.Realtime
             x >= 0 && y >= 0 && y < Depth && x < Definition.Layout[y].Length && Definition.Layout[y][x] != 'x';
 
         /// <summary>Recomputes which tiles can be walked on and which are seats after furniture changes.</summary>
+        /// <summary>Why a piece can't go at (x, y) facing dir (null if it fits). ignoreId skips the piece being rotated.</summary>
+        public string? FitProblem(string type, int x, int y, string dir, string? ignoreId, DateTime now)
+        {
+            var tiles = RoomTemplates.Footprint(type, x, y, dir).ToList();
+            if (tiles.Any(t => !IsFloor(t.X, t.Y)))
+            {
+                return "It doesn't fit there.";
+            }
+            if (tiles.Contains((Definition.DoorX, Definition.DoorY)))
+            {
+                return "Keep the door clear.";
+            }
+            var isRug = RoomTemplates.IsRug(type);
+            if (Definition.Furni.Any(f => f.Id != ignoreId && RoomTemplates.IsRug(f.Type) == isRug && RoomTemplates.Footprint(f).Any(tiles.Contains)))
+            {
+                return "Something is already there.";
+            }
+            if (RoomTemplates.IsBlocking(type) && Occupants.Values.Any(o => tiles.Contains(o.PositionAt(now)) || (o.Destination is { } d && tiles.Contains(d))))
+            {
+                return "Someone is standing there.";
+            }
+            return null;
+        }
+
         public void RebuildGrid()
         {
             Seats.Clear();
@@ -125,17 +149,20 @@ namespace EduVerse.Server.Realtime
             }
             foreach (var item in Definition.Furni)
             {
-                if (item.X >= Width || item.Y >= Depth || item.X < 0 || item.Y < 0)
+                foreach (var (fx, fy) in RoomTemplates.Footprint(item))
                 {
-                    continue;
-                }
-                if (RoomTemplates.IsBlocking(item.Type))
-                {
-                    Walkable[item.X, item.Y] = false;
-                }
-                if (RoomTemplates.IsSeat(item.Type))
-                {
-                    Seats[(item.X, item.Y)] = item;
+                    if (fx >= Width || fy >= Depth || fx < 0 || fy < 0)
+                    {
+                        continue;
+                    }
+                    if (RoomTemplates.IsBlocking(item.Type))
+                    {
+                        Walkable[fx, fy] = false;
+                    }
+                    if (RoomTemplates.IsSeat(item.Type))
+                    {
+                        Seats[(fx, fy)] = item;
+                    }
                 }
             }
         }
@@ -740,24 +767,10 @@ namespace EduVerse.Server.Realtime
                 {
                     throw new WorldException($"A room can hold up to {MaxFurniPerRoom} items.");
                 }
-                if (!room.IsFloor(x, y))
+                var problem = room.FitProblem(type, x, y, NormalizeDir(dir), null, Clock());
+                if (problem != null)
                 {
-                    throw new WorldException("Place it on the floor.");
-                }
-                if (x == room.Definition.DoorX && y == room.Definition.DoorY)
-                {
-                    throw new WorldException("Keep the door clear.");
-                }
-                var isRug = RoomTemplates.IsRug(type);
-                if (room.Definition.Furni.Any(f => f.X == x && f.Y == y && RoomTemplates.IsRug(f.Type) == isRug))
-                {
-                    throw new WorldException("Something is already there.");
-                }
-                var now = Clock();
-                if (RoomTemplates.IsBlocking(type) &&
-                    room.Occupants.Values.Any(o => o.PositionAt(now) == (x, y) || o.Destination == (x, y)))
-                {
-                    throw new WorldException("Someone is standing there.");
+                    throw new WorldException(problem);
                 }
                 item = new FurniItem { Id = RoomRuntime.NewFurniId(), Type = type, X = x, Y = y, Dir = NormalizeDir(dir) };
                 room.Definition.Furni.Add(item);
@@ -777,7 +790,14 @@ namespace EduVerse.Server.Realtime
             {
                 item = room.Definition.Furni.FirstOrDefault(f => f.Id == furniId)
                        ?? throw new WorldException("That item is gone.");
-                item.Dir = item.Dir switch { "se" => "sw", "sw" => "nw", "nw" => "ne", _ => "se" };
+                var next = item.Dir switch { "se" => "sw", "sw" => "nw", "nw" => "ne", _ => "se" };
+                var problem = room.FitProblem(item.Type, item.X, item.Y, next, item.Id, Clock());
+                if (problem != null)
+                {
+                    throw new WorldException(problem == "It doesn't fit there." ? "There's no room to turn it." : problem);
+                }
+                item.Dir = next;
+                room.RebuildGrid();
             }
             await _store.SaveRoomAsync(room.Definition);
             return (room, item);

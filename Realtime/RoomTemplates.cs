@@ -53,6 +53,27 @@ namespace EduVerse.Server.Realtime
             Shape("shape_zigzag", "Zigzag", 18, 12, (x, y) => (x / 6) % 2 == 0 ? y >= 3 : y < 9),
         };
 
+        /// <summary>The tiles a piece covers: (x, y) is its back corner; big pieces spread toward +x and +y.</summary>
+        public static IEnumerable<(int X, int Y)> Footprint(string type, int x, int y, string? dir)
+        {
+            var asset = Catalog.Asset(type);
+            var w = Math.Max(1, asset?.W ?? 1);
+            var d = Math.Max(1, asset?.D ?? 1);
+            if (dir is "se" or "nw")
+            {
+                (w, d) = (d, w);
+            }
+            for (var dx = 0; dx < w; dx++)
+            {
+                for (var dy = 0; dy < d; dy++)
+                {
+                    yield return (x + dx, y + dy);
+                }
+            }
+        }
+
+        public static IEnumerable<(int X, int Y)> Footprint(FurniItem item) => Footprint(item.Type, item.X, item.Y, item.Dir);
+
         public static bool IsBlocking(string type) =>
             Blocking.Contains(type) || Catalog.Asset(type) is { Seat: false, Walk: false };
         public static bool IsSeat(string type) => Seats.Contains(type) || Catalog.Asset(type)?.Seat == true;
@@ -255,8 +276,9 @@ namespace EduVerse.Server.Realtime
 
             // Lounge (top left).
             Rugs(room, "kf_rug_rectangle_stripes_a", 2, 3, 6, 6);
-            foreach (var x in new[] { 3, 4, 5 })
+            foreach (var x in new[] { 2, 4 })
             {
+                // couches are 2 tiles wide
                 Add(room, "kf_couch_pillows", x, 2, "sw");
                 Add(room, "k_loungeSofa", x, 7, "ne");
             }
@@ -398,11 +420,10 @@ namespace EduVerse.Server.Realtime
             Add(room, "k_kitchenSink", 2, 0, "sw");
             Add(room, "k_kitchenStove", 3, 0, "sw");
             Add(room, "k_kitchenCabinetDrawer", 4, 0, "sw");
-            TableWithChairs(room, "k_tableRound", "k_chairCushion", 3, 3);
+            TableWithChairs(room, "kr_table_round_a_small_decorated", "k_chairCushion", 3, 3);
             // Living room.
             Rugs(room, "k_rugRectangle", 7, 4, 10, 6);
-            Add(room, "k_loungeSofa", 8, 3, "sw");
-            Add(room, "k_loungeSofa", 9, 3, "sw");
+            Add(room, "k_loungeSofa", 8, 3, "sw"); // 2 tiles wide
             Add(room, "k_loungeChair", 7, 5, "se");
             Add(room, "k_tableCoffee", 8, 5);
             Add(room, "k_televisionModern", 8, 7, "ne");
@@ -439,9 +460,9 @@ namespace EduVerse.Server.Realtime
             room.Furni.RemoveAll(f => f.Type == "k_rugDoormat" && f.X == 1 && f.Y == 11);
             // A second bedroom, a garden corner and a games room.
             Add(room, "kf_bed_single_a", 16, 1, "sw");
-            Add(room, "kf_bed_single_b", 17, 3, "nw");
+            Add(room, "kf_bed_single_b", 15, 3, "nw");
             Add(room, "k_sideTableDrawers", 17, 0, "sw");
-            Add(room, "k_bear", 16, 3);
+            Add(room, "k_bear", 17, 4);
             Rugs(room, "kf_rug_rectangle_stripes_b", 15, 5, 17, 6);
             foreach (var (px, py) in new[] { (3, 15), (5, 15), (7, 15), (2, 12) })
             {
@@ -452,7 +473,7 @@ namespace EduVerse.Server.Realtime
             Rugs(room, "kf_rug_rectangle_b", 8, 11, 12, 14);
             Add(room, "arcade", 9, 10, "sw");
             Add(room, "arcade", 11, 10, "sw");
-            Add(room, "k_loungeSofaLong", 10, 15, "ne");
+            Add(room, "k_loungeSofaLong", 10, 14, "ne");
             Add(room, "beanbag", 8, 13, "se");
             Add(room, "k_radio", 12, 12);
             Add(room, "k_washerDryerStacked", 17, 15, "nw");
