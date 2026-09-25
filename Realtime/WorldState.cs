@@ -822,7 +822,7 @@ namespace EduVerse.Server.Realtime
         public async Task<RoomRuntime> SetRoomStyleAsync(string connectionId, string wallpaper, string floor)
         {
             var room = RequireOwner(connectionId);
-            if (!RoomStyles.Wallpapers.Contains(wallpaper) || !RoomStyles.Floors.Contains(floor))
+            if (!RoomStyles.IsWallpaper(wallpaper) || !RoomStyles.IsFloor(floor))
             {
                 throw new WorldException("Unknown wallpaper or floor.");
             }
