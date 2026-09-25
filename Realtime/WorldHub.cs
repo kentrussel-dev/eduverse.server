@@ -40,7 +40,7 @@ namespace EduVerse.Server.Realtime
             var isTeacher = bool.TryParse(user.FindFirstValue("isTeacher"), out var teacher) && teacher;
             var name = DisplayName(user.FindFirstValue(ClaimTypes.Name), user.FindFirstValue(ClaimTypes.Email));
             var profile = await _profiles.GetAsync(userId, user.FindFirstValue("gender"));
-            Context.Items[PlayerKey] = new PlayerInfo(userId, name, isTeacher, profile.Look);
+            Context.Items[PlayerKey] = new PlayerInfo(userId, name, isTeacher, profile.Look, user.FindFirstValue("isAdmin") == "True");
             await base.OnConnectedAsync();
         }
 

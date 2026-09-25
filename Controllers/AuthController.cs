@@ -439,7 +439,10 @@ namespace EduVerse.Server.Controllers
                 new Claim(ClaimTypes.Name, user.FullName ?? string.Empty),
                 new Claim("avatar", user.Avatar ?? "default.png"),
                 new Claim("isTeacher", user.IsTeacher.ToString()),
-                new Claim("gender", user.Gender ?? string.Empty)
+                new Claim("gender", user.Gender ?? string.Empty),
+                // Admins (emails listed in Admin:Emails) can redesign the Main Hall, library and classrooms.
+                new Claim("isAdmin", (_configuration.GetSection("Admin:Emails").Get<string[]>() ?? Array.Empty<string>())
+                    .Contains(user.Email ?? string.Empty, StringComparer.OrdinalIgnoreCase).ToString())
             };
 
             var jwtKey = _configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not configured");
