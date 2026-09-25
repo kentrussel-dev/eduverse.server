@@ -483,7 +483,9 @@ namespace EduVerse.Server.Realtime
                     room.IsHost(player),
                     room.IsOwner(player),
                     room.Definition.MaxUsers,
-                    room.IsOwner(player) ? room.Definition.Bans.ToList() : new List<RoomBan>());
+                    room.IsOwner(player) ? room.Definition.Bans.ToList() : new List<RoomBan>(),
+                    room.Definition.Wallpaper ?? "default",
+                    room.Definition.Floor ?? "default");
                 return (snapshot, room.ToDto(occupant, now), leftId);
             }
         }
@@ -799,6 +801,38 @@ namespace EduVerse.Server.Realtime
             }
             await _store.SaveRoomAsync(room.Definition);
             return (room, item);
+        }
+
+        /// <summary>Picks up every piece of furniture in the owner's room (the whiteboard stays).</summary>
+        public async Task<(RoomRuntime Room, List<FurniItem> Items)> PickUpAllAsync(string connectionId)
+        {
+            var room = RequireOwner(connectionId);
+            List<FurniItem> items;
+            lock (room.Sync)
+            {
+                items = room.Definition.Furni.Where(f => f.Type != "whiteboard").ToList();
+                room.Definition.Furni.RemoveAll(f => f.Type != "whiteboard");
+                room.RebuildGrid();
+            }
+            await _store.SaveRoomAsync(room.Definition);
+            return (room, items);
+        }
+
+        /// <summary>Changes the owner's room wallpaper and floor.</summary>
+        public async Task<RoomRuntime> SetRoomStyleAsync(string connectionId, string wallpaper, string floor)
+        {
+            var room = RequireOwner(connectionId);
+            if (!RoomStyles.Wallpapers.Contains(wallpaper) || !RoomStyles.Floors.Contains(floor))
+            {
+                throw new WorldException("Unknown wallpaper or floor.");
+            }
+            lock (room.Sync)
+            {
+                room.Definition.Wallpaper = wallpaper;
+                room.Definition.Floor = floor;
+            }
+            await _store.SaveRoomAsync(room.Definition);
+            return room;
         }
 
         // ---- host tools ----
